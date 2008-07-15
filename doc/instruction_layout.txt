@@ -1,0 +1,48 @@
+-----------------------------------------------------------
+-- r-VEX | Instruction layout
+-----------------------------------------------------------
+--
+-- Copyright (c) 2008, Thijs van As <t.vanas@gmail.com>
+--
+-----------------------------------------------------------
+-- instruction_layout.txt
+-----------------------------------------------------------
+
+This document describes the instrction layout for the r-VEX
+processor. An instruction for an 4-wide r-VEX consists of
+4 syllables.
+
+-----------------------------------------------------------
+General information
+-----------------------------------------------------------
+
+A syllable has a width of 32 bits, so an instruction has a width of 128 bits:
+
+127         96           64           32           0
+^           ^            ^            ^            ^
+|            |            |            |            |          
+|[syllable 3]|[syllable 2]|[syllable 1]|[syllable 0]|
+|            |            |            |            |
+
+A standard VEX cluster [1] consists of 4 ALU units and 2 MUL units.
+
+
+-----------------------------------------------------------
+Allowed instruction types per syllable
+-----------------------------------------------------------
+
+syllable 0: ALU, CTRL
+syllable 1: ALU, MUL
+syllable 2: ALU, MUL
+syllable 3: ALU, MEM
+
+The r-VEX assembler should take care of syllable ordering inside the
+instructions.
+
+-----------------------------------------------------------
+References
+-----------------------------------------------------------
+
+[1] J.A. Fisher, P. Faraboschi and C. Young. Embedded Computing, A VLIW
+    Approach to Architecture, Compilers and Tools. Morgan Kaufmann, 2004.
+
