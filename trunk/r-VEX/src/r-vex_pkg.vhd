@@ -1,12 +1,31 @@
------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- r-VEX | Package with common definitions and opcodes
------------------------------------------------------------
+--------------------------------------------------------------------------------
 --
 -- Copyright (c) 2008, Thijs van As <t.vanas@gmail.com>
 --
------------------------------------------------------------
+-- Computer Engineering Laboratory
+-- Delft University of Technology
+-- Delft, The Netherlands
+--
+-- http://r-vex.googlecode.com
+--
+-- r-VEX is free hardware: you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation, either version 3 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--
+--------------------------------------------------------------------------------
 -- r-vex_pkg.vhd
------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -14,9 +33,9 @@ use ieee.std_logic_signed.all;
 use ieee.numeric_std.all;
 
 package rVEX_pkg is
-	-----------------------------------------------------------
+	--------------------------------------------------------------------------------
 	-- Common definitions
-	-----------------------------------------------------------
+	--------------------------------------------------------------------------------
 	-- Active low/high logic on FPGA board
 	constant ACTIVE_LOW  : std_logic := '1';							-- '1' for Virtex-II Pro board, '0' for Spartan-3E board 
 	
@@ -50,9 +69,9 @@ package rVEX_pkg is
 	constant SEL_EXE     : std_logic := '0';                            -- Select execute unit as source for GR writeback
 	constant SEL_MEM     : std_logic := '1';                            -- Select memory unit as source for GR writeback
 
-	-----------------------------------------------------------
+	--------------------------------------------------------------------------------
 	-- Opcodes
-	-----------------------------------------------------------
+	--------------------------------------------------------------------------------
 	constant ALU_OP      : std_logic_vector(6 downto 0) := "1------";   -- ALU operation
 	constant MUL_OP      : std_logic_vector(6 downto 0) := "000----";   -- MUL operation
 	constant CTRL_OP     : std_logic_vector(6 downto 0) := "010----";   -- CTRL operation
