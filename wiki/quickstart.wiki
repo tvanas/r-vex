@@ -1,8 +1,10 @@
 #labels Featured,Phase-Deploy
 =Quickstart Guide for XUP V2P FPGA Board=
 
+This is a quickstart guide for the Xilinx University Program Virtex-II Pro board by Digilent (1).
+
 ==Requirements==
-  * a Xilinx University Program Virtex-II Pro board [1] 
+  * a Xilinx University Program Virtex-II Pro board (1)
   * PC running Linux or Windows^1^
   * Xilinx ISE Suite (tested with 8.103i, should work with later versions too)
 
@@ -19,4 +21,4 @@ By default, an application is loaded and pre-synthesized to calculate the 45th F
 
 ==References==
 
-[1] Digilent Inc., [http://www.digilentinc.com/Products/Detail.cfm?av1=Products&Nav2=Programmable&Prod=XUPV2P Xilinx University Program Virtex-II Pro board]
+(1) Digilent Inc., [http://www.digilentinc.com/Products/Detail.cfm?av1=Products&Nav2=Programmable&Prod=XUPV2P Xilinx University Program Virtex-II Pro board]
