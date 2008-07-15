@@ -21,7 +21,7 @@ package rVEX_pkg is
 	constant ACTIVE_LOW  : std_logic := '1';							-- '1' for Virtex-II Pro board, '0' for Spartan-3E board 
 	
 	-- Register file definitions
-	constant GR_DEPTH    : integer := 64;                               -- Depth of general purpose register file
+	constant GR_DEPTH    : integer := 32;                               -- Depth of general purpose register file
 	constant BR_DEPTH    : integer := 8;                                -- Depth of branch register file
 
 	-- Memory address definitions

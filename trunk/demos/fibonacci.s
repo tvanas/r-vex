@@ -15,4 +15,5 @@ goto LABEL_BEGIN
 ;;
 LABEL_END:
 stw 0x0[$r0.15] = $r0.1
+mov $r0.9 = $r0.0
 ;;
