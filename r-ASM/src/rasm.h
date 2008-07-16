@@ -24,20 +24,24 @@
  * rasm.h
  */
 
+#include "syllable.h"
+
 #define VERSION 0.1
 
+#define MAX_LABELS 128  /* maximum numbers of labels */
+
 typedef struct label_t {
-	char name[50];
-	int address;
+	char name[64];
+	unsigned address;
 } label_t;
 
-label_t labels[128]; /* support for 128 labels */
+label_t labels[MAX_LABELS];
 int num_labels;
 
-char syllable_buffer[4][100];
-char syllable_final[4][100];
-int syllable_func[4];
-int syllable_fill[4];
+char syllable_buffer[NUM_SLOTS][100];
+char syllable_final[NUM_SLOTS][100];
+int syllable_func[NUM_SLOTS];
+int syllable_fill[NUM_SLOTS];
 int syllable_count;
 
 FILE *in_asm, *out_vhd;
