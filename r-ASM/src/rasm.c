@@ -83,43 +83,32 @@ void print_instruction(int address)
 	char eol = ';';
 	char one = '1';
 
-	/* TODO:
-	 * Currently supports 4-issue VLIW with the following issue-configuration:
-	 *
-	 *   0 : ALU / CTRL
-	 *   1 : ALU / MUL
-	 *   2 : ALU / MUL
-	 *   3 : ALU / MEM
-	 * 
-	 * This is the default r-VEX cluster configuration. This should become more dynamic.	
-   	 */
-
 	/* sort MEM, CTRL and MUL operations in the corresponding slots */
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < NUM_SLOTS; i++) {
 		if (syllable_func[i] == MEM) {
-			strcpy(syllable_final[0], syllable_buffer[i]);
-			syllable_fill[0] = 1;
+			strcpy(syllable_final[MEM_SLOT], syllable_buffer[i]);
+			syllable_fill[MEM_SLOT] = 1;
 		}
 		else if (syllable_func[i] == CTRL) {
-			strcpy(syllable_final[3], syllable_buffer[i]);
-			syllable_fill[3] = 1;
+			strcpy(syllable_final[CTRL_SLOT], syllable_buffer[i]);
+			syllable_fill[CTRL_SLOT] = 1;
 		}
 		else if (syllable_func[i] == MUL) {
-			if (syllable_fill[1] == 0) {
-				strcpy(syllable_final[1], syllable_buffer[i]);
-				syllable_fill[1] = 1;
+			if (syllable_fill[MUL0_SLOT] == 0) {
+				strcpy(syllable_final[MUL0_SLOT], syllable_buffer[i]);
+				syllable_fill[MUL0_SLOT] = 1;
 			}
 			else {
-				strcpy(syllable_final[2], syllable_buffer[i]);
-				syllable_fill[2] = 1;
+				strcpy(syllable_final[MUL1_SLOT], syllable_buffer[i]);
+				syllable_fill[MUL1_SLOT] = 1;
 			}
 		}
 	}
 
 	/* sort ALU operations in the corresponding slots */
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < NUM_SLOTS; i++) {
 		if (syllable_fill[i] == 0) {
-			for (j = k; j < 4; j++) {
+			for (j = k; j < NUM_SLOTS; j++) {
 				if (syllable_func[j] == ALU) {
 					strcpy(syllable_final[i], syllable_buffer[j]);
 					syllable_fill[i] = 1;
@@ -130,13 +119,13 @@ void print_instruction(int address)
 		}
 	}
 	
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < NUM_SLOTS; i++) {
 		if (i == 0) {
 			memcpy(&syllable_final[i][32], &one, 1);     /* first syllable bit */
 			fprintf(out_vhd, "\t\t\t\twhen x\"%.2X\"  => instr <= ", address);
 		}
 		else {
-			if (i == 3) {
+			if (i == (NUM_SLOTS - 1)) {
 				memcpy(&syllable_final[i][31], &one, 1); /* last syllable bit */
 				memcpy(&syllable_final[i][34], &eol, 1); /* VHDL ; end of line character */
 			}
@@ -154,7 +143,6 @@ int assemble()
 	char *operation = malloc(10);
 	char *operands = malloc(100);
 	char *label = malloc(100);
-	char eol = '&';
 	char syl_word[33];
 	char tmp[12];
 	
@@ -175,7 +163,7 @@ int assemble()
 	num_labels = 0;
 	syllable_count = 0;
 
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < NUM_SLOTS; i++) {
 		strcpy(syllable_buffer[i], "\"00000000000000000000000000000000\"& -- nop\n");
 		syllable_func[i] = ALU;
 		syllable_fill[i] = 0;
@@ -811,23 +799,23 @@ int main(int argc, char **argv)
 	strcpy(outfile, "i_mem.vhd");
 	strcpy(flags, argv[0]);
 	
-	if (argc == 1) {
+	if (argc == 1) {     /* no commandline arguments given */
 		 print_usage();
 		 exit(0);
 	}
 
 	while ((opt = getopt(argc, argv, "o:lh")) != -1) {
 		switch (opt) {
-			case 'o':
+			case 'o':  /* alternative output file */
 				sscanf(optarg, "%s", outfile);
 				break;
-			case 'l':
+			case 'l':  /* print label debug output */
 				label_output = 1;
 				break;
-			case 'h':
+			case 'h':  /* print help */
 				print_usage();
 				break;
-			default:
+			default:   /* catch other arguments */
 				exit(EXIT_FAILURE);
 				break;
 		}
@@ -851,21 +839,25 @@ int main(int argc, char **argv)
 		sprintf(flags, "%s %s", flags, argv[i]);
 	}
 	
+	/* print VHDL header to output file */
 	vhdl_header(argv[argc - 1], flags, outfile);
 
 	do_resolve = assemble();
 
+	/* print VHDL footer to output file */
 	vhdl_footer();
 
 	fclose(in_asm);
 	fclose(out_vhd);
-	
+
+	/* -l flag output */
 	if (label_output == 1) {
 		printf("\nUnresolved labels after first pass: %d\n", do_resolve);
 	
 		print_labels();
 	}
 	
+	/* go for a second pass when there were unresolved labels */
 	if (do_resolve) {
 		resolve_labels(outfile);
 	}
