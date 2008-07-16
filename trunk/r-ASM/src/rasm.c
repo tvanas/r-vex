@@ -62,7 +62,7 @@ void resolve_labels(char *outfile)
 
 void print_labels()
 {
-	int i = 0;
+	int i;
 
 	printf("\n%-24s| %-8s\n", "Label name", "Address");
 	printf("------------------------+---------\n");
@@ -187,6 +187,7 @@ int assemble()
 		if (strcmp(operation, ";;") == 0) {
 			new_instr = 1;
 			syllable_count = 4;
+			opcode = NOP;
 		}
 		else if (strcmp(operation, "add") == 0) {
 			opcode = ADD;
@@ -430,7 +431,9 @@ int assemble()
 			}
 		}
 
-		syllable_func[syllable_count] = determine_func(opcode);
+		if (syllable_count != 4) {
+			syllable_func[syllable_count] = determine_func(opcode);
+		}
 
 		/*
 		 * determine syllable type
@@ -662,7 +665,7 @@ int assemble()
 					strcpy(labels[num_labels].name, label);
 					num_labels++;
 				}
-	
+
 				rd = 0;
 				bs = 0;
 				rs1 = 0;
