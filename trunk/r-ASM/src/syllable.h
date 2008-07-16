@@ -28,7 +28,18 @@
  */
 
 /* number of GR registers */
-#define NUM_GR 64
+#define NUM_GR 32    /* 32 default in current r-VEX configuration */
+
+/*
+ * issue slots
+ * (all slots are ALU slots)
+ */
+#define NUM_SLOTS  4 /* default VLIW 4 issue */
+
+#define CTRL_SLOT  3 /* slot 0 in hardware */
+#define MUL0_SLOT  2 /* slot 1 in hardware */
+#define MUL1_SLOT  1 /* slot 2 in hardware */
+#define MEM_SLOT   0 /* slot 3 in hardware */
 
 /* 
  * syllable types 
@@ -49,9 +60,10 @@
 #define MEM        4
 
 /* 
- * immediate switch types 
+ * immediate switch types
+ * values according to 'immediate switch' bits
  */
-#define NO_IMM     0
+#define NO_IMM     0 
 #define BRANCH_IMM 1
 #define SHORT_IMM  2
 #define LONG_IMM   3
@@ -61,7 +73,7 @@
  */
 
 /* special operations */
-#define NOP  0x00000000
+#define NOP     0x00000000
 #define STOP    53 
 
 /* ALU opcodes */
