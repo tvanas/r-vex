@@ -1,4 +1,4 @@
-#labels Featured,Phase-Deploy
+#labels Featured,Phase-Deploy,Phase-Requirements
 =Quickstart Guide for XUP V2P FPGA Board=
 
 This is a quickstart guide for the Xilinx University Program Virtex-II Pro board by Digilent (1).
@@ -6,7 +6,7 @@ This is a quickstart guide for the Xilinx University Program Virtex-II Pro board
 ==Requirements==
   * a Xilinx University Program Virtex-II Pro board (1)
   * PC running Linux or Windows^1^
-  * Xilinx ISE Suite (tested with 8.103i, should work with later versions too)
+  * Xilinx ISE Suite (tested with 8.1.03i, should work with later versions too)
 
 ^1^ When you want to make use of the Makefile method described below on a Windows machine, a Cygwin installation should be present with GNU Make. Xilinx EDK automatically installs a version of Cygwin. However, some GNU tools like `cat` are not included. This results in an error while bundling the log files after synthesis. This can be safely ignored.
 
