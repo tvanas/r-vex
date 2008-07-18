@@ -31,7 +31,7 @@ default:
 	@echo -e "r-VEX stand-alone system deployer"
 	@echo -e "---------------------------------"
 	@echo -e "\nUsage: make <target>"
-	@echo -e "\nTargets:  v2p      | Xilinx Virtex-II Pro VP30 Decvelopment Board"
+	@echo -e "\nTargets:  v2p      | Xilinx Virtex-II Pro VP30 Development Board"
 	@echo -e "\n          modelsim | Run modelsim simulation"
 	@echo -e "          vcom     | Compile files for Modelsim"
 	@echo -e "\n          fpga     | Download bitstream to FPGA"
@@ -48,7 +48,6 @@ unlock:	unlock_cable.cmd
 	impact -batch unlock_cable.cmd
 
 log_%.txt:
-	@echo -e "`date +\%s`-`cat seconds`\nquit" > seconds
 	@echo -e "--- Synthesize ---" > $@
 	@echo -e "<r-vex_$*.srp>\n" >> $@
 	@cat r-vex_$*.srp >> $@
@@ -78,7 +77,6 @@ log_%.txt:
 	@echo -e "<r-vex_$*.bgn>\n" >> log_$*.txt
 	@cat r-vex_$*.bgn >> $@
 	@echo -e "\n</r-vex_$*.bgn>\n\n" >> $@
-	@echo -e "Process took `bc -q  seconds` seconds on `hostname`\n" >> $@;
 	@echo -e "\n\nLog file created in $@\n"
 
 clean:
@@ -110,7 +108,6 @@ clean:
 	rm -f *_usage.xml
 	rm -f *.xpi
 	rm -f log_*
-	rm -f seconds*   # time marks
 	rm -f *~         # temporary backup saves
 	rm -rf work      # modelsim
 	rm -f vsim.wlf   # modelsim
@@ -121,19 +118,18 @@ clean:
 	@echo -e "--- auxiliary files generated ---"
 
 %.bgn %.bit %.drc: %.ncd %.ut
-	bitgen -f `basename $< .ncd`.ut $<
+	bitgen -f $*.ut $<
 
 %.ncd %.pad %_pad.csv %_pad.txt %.par %.xpi: %_map.ncd %.pcf
-	par -w -ol std -t 1 $< $@ `basename $< _map.ncd`.pcf
+	par -w -ol std -t 1 $< $@ $*.pcf
 
 %_map.mrp %_map.ncd %_map.ngm %.pcf: %.ngd
-	map -p ${XIL_PART_$*} -cm area -pr b -k 4 -c 100 -o `basename $< .ngd`_map.ncd $< `basename $< .ngd`.pcf
+	map -p ${XIL_PART_$*} -cm area -pr b -k 4 -c 100 -o $*_map.ncd $< $*.pcf
 
 %.bld %.ngd: %.ngc %.ucf
-	ngdbuild -aul -dd __ngo -uc `basename $< .ngc`.ucf -p ${XIL_PART_$*} $< $@
+	ngdbuild -aul -dd __ngo -uc $*.ucf -p ${XIL_PART_$*} $< $@
 
 %.ngc %.ngr: %.xst ${OBJS}
-	@echo `date +\%s` > seconds
 	xst -ifn $<
 
 %.prj:		
