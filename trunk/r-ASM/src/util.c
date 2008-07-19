@@ -49,13 +49,16 @@ char* itob(unsigned num, int bits)
     return result;
 }
 
-/* removes spaces from string */
+/* removes spaces and comments (#) from string */
 void delete_spaces(char *string)
 {
 	char *t = string;
-
+	
 	while (*string != '\0') {
-		if (*string != ' ' && *string != '\t') {
+		if (*string == '#') {
+			 break;
+		}
+		else if (*string != ' ' && *string != '\t') {
 			*t++ = *string;
 		}
 		
@@ -73,12 +76,12 @@ int fetchline(FILE *in, char *line)
 
 	i = 0;
 	
-	while ((c = getc(in)) != EOF && c != '#' && c != '\n') {
+	while ((c = getc(in)) != EOF && c != '\n') {
 		line[i++] = c;
 	}
 
 	line[i] = '\0';
-
+	
 	delete_spaces(line);
 
 	return i;

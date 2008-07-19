@@ -24,7 +24,11 @@
  * util.h
  */
 
+#ifndef __UTIL_H__
+#define __UTIL_H__
+
 char* itob(unsigned num, int bits);
 void delete_spaces(char *string);
 int fetchline(FILE *in, char *line);
 
+#endif /* __UTIL_H__ */

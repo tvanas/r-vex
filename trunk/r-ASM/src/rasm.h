@@ -24,9 +24,10 @@
  * rasm.h
  */
 
-#include "syllable.h"
+#ifndef __RASM_H__
+#define __RASM_H__
 
-#define VERSION 0.1
+#include "syllable.h"
 
 #define MAX_LABELS 128  /* maximum numbers of labels */
 
@@ -46,3 +47,4 @@ int syllable_count;
 
 FILE *in_asm, *out_vhd;
 
+#endif /* __RASM_H__ */
