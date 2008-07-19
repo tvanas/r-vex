@@ -7,7 +7,7 @@
 -- 
 --     source file: ../../demos/fibonacci.s
 --     r-ASM flags: ./rasm ../../demos/fibonacci.s
---     date & time: Jul 19, 2008 @ 15:02:32
+--     date & time: Jul 19, 2008 @ 17:01:38
 -- 
 -- r-VEX & r-ASM are
 -- Copyright (c) 2008, Thijs van As <t.vanas@gmail.com>
@@ -72,10 +72,10 @@ begin
 				                        "10110000000100100000000000000000"& -- mov $r0.9 = $r0.0
 				                        "00000000000000000000000000000000"& -- nop
 				                        "00000000000000000000000000000001"; -- nop
-				when others => instr <= "00000000000000000000000000000001"& -- nop
+				when others => instr <= "00000000000000000000000000000010"& -- nop
 				                        "00000000000000000000000000000000"& -- nop
 				                        "00000000000000000000000000000000"& -- nop
-				                        "00111110000000000000000000000010"; -- stop
+				                        "00111110000000000000000000000001"; -- stop
 			end case;
 		end if;
 	end process memory;
