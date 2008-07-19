@@ -24,6 +24,7 @@
  * syllable.c
  */
 
+#define INCLUDE_TABLE
 #include "syllable.h"
 
 int determine_func(int opcode) {
@@ -39,5 +40,28 @@ int determine_func(int opcode) {
 	else if ((opcode >= LDW) && (opcode <= PFT)) {
 		return MEM;
 	}
+}
+
+static int operation_compare(const void *a, const void *b)
+{
+	 const char *key = a;
+	 const struct operation_t *operation = b;
+
+	 return strcmp(key, operation->operation);
+}
+
+int operation_to_opcode(const char *operation)
+{
+	 struct operation_t *op;
+
+	 op = (struct operation_t *)bsearch(operation, operation_table,
+	                                    sizeof(operation_table) / sizeof(struct operation_t), sizeof(struct operation_t),
+	                                    operation_compare);
+
+	 if (!op) {
+		  return -1;
+	 }
+
+	 return op->opcode;
 }
 

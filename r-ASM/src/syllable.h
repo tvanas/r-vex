@@ -27,6 +27,9 @@
  * syllable.h
  */
 
+#ifndef __SYLLABLE_H__
+#define __SYLLABLE_H__
+
 /* number of GR registers */
 #define NUM_GR 32    /* 32 default in current r-VEX configuration */
 
@@ -162,5 +165,90 @@
 
 #define SYL_FOLLOW 28
 
-int determine_func(int opcode);
+#ifdef INCLUDE_TABLE
+static struct operation_t {
+	 const char *operation;
+	 int opcode;
+} operation_table[] = {
+	{ "add",    ADD    },
+	{ "addcg",  ADDCG  },
+	{ "and",    AND    },
+	{ "andc",   ANDC   },
+	{ "andl",   ANDL   },
+	{ "br",     BR     },
+	{ "brf",    BRF    },
+	{ "call",   CALL   },
+	{ "cmpeq",  CMPEQ  },
+	{ "cmpge",  CMPGE  },
+	{ "cmpgeu", CMPGEU },
+	{ "cmpgt",  CMPGT  },
+	{ "cmpgtu", CMPGTU },
+	{ "cmple",  CMPLE  },
+	{ "cmpleu", CMPLEU },
+	{ "cmplt",  CMPLT  },
+	{ "cmpltu", CMPLTU },
+	{ "cmpne",  CMPNE  },
+	{ "divs",   DIVS   },
+	{ "goto",   GOTO   },
+	{ "icall",  ICALL  },
+	{ "igoto",  IGOTO  },
+	{ "ldb",    LDB    },
+	{ "ldbu",   LDBU   },
+	{ "ldh",    LDH    },
+	{ "ldhu",   LDHU   },
+	{ "ldw",    LDW    },
+	{ "max",    MAX    },
+	{ "maxu",   MAXU   },  
+	{ "min",    MIN    },
+	{ "minu",   MINU   }, 
+	{ "mov",    MOV    },
+	{ "mpyh",   MPYH   },
+	{ "mpyhh",  MPYHH  },
+	{ "mpyhhu", MPYHHU },
+	{ "mpyhs",  MPYHS  },
+	{ "mpyhu",  MPYHU  },
+	{ "mpyl",   MPYL   },
+	{ "mpylh",  MPYLH  },
+	{ "mpylhu", MPYLHU },
+	{ "mpyll",  MPYLL  },
+	{ "mpyllu", MPYLLU },
+	{ "mpylu",  MPYLU  },
+	{ "mtb",    MTB    },
+	{ "nandl",  NANDL  },
+	{ "nop",    NOP    },
+	{ "norl",   NORL   },
+	{ "or",     OR     },
+	{ "orc",    ORC    },
+	{ "orl",    ORL    },
+	{ "pft",    PFT    },
+	{ "recv",   RECV   },
+	{ "return", RETURN },
+	{ "rfi",    RFI    },
+	{ "send",   SEND   },
+	{ "sh1add", SH1ADD },
+	{ "sh2add", SH2ADD },
+	{ "sh3add", SH3ADD },
+	{ "sh4add", SH4ADD },
+	{ "shl",    SHL    },
+	{ "shr",    SHR    },
+	{ "shru",   SHRU   },
+	{ "slct",   SLCT   },
+	{ "slctf",  SLCTF  },
+	{ "stb",    STB    },
+	{ "sth",    STH    },
+	{ "stop",   STOP   },
+	{ "stw",    STW    },
+	{ "sub",    SUB    },
+	{ "sxtb",   SXTB   },
+	{ "sxth",   SXTH   },
+	{ "xnop",   XNOP   },
+	{ "xor",    XOR    },
+	{ "zxtb",   ZXTB   },
+	{ "zxth",   ZXTH   },
+};
+#endif /* INCLUDE_TABLE */
 
+int determine_func(int opcode);
+int operation_to_opcode(const char *operation);
+
+#endif /* __SYLLABLE_H__ */

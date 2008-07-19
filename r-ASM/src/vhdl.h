@@ -24,6 +24,10 @@
  * vhdl.h
  */
 
+#ifndef __VHDL_H__
+#define __VHDL_H__
+
 void vhdl_header(char *src_file, char *flags, char *dest_file);
 void vhdl_footer();
 
+#endif /* __VHDL_H__ */

@@ -34,6 +34,7 @@
 #include "rasm.h"
 #include "util.h"
 
+/* resolves unresolved labels in second pass */
 void resolve_labels(char *outfile)
 {
 	char *line = malloc(200);
@@ -60,6 +61,7 @@ void resolve_labels(char *outfile)
 	fclose(in_asm);
 }
 
+/* prints label debug info when -l option is present */
 void print_labels()
 {
 	int i;
@@ -74,6 +76,7 @@ void print_labels()
 	printf("\n");
 }
 
+/* prints instruction to VHDL file */
 void print_instruction(int address)
 {
 	int i = 0;
@@ -121,13 +124,13 @@ void print_instruction(int address)
 	
 	for (i = 0; i < NUM_SLOTS; i++) {
 		if (i == 0) {
-			memcpy(&syllable_final[i][32], &one, 1);     /* first syllable bit */
+			syllable_final[i][31] = '1'; /* last syllable bit */
 			fprintf(out_vhd, "\t\t\t\twhen x\"%.2X\"  => instr <= ", address);
 		}
 		else {
 			if (i == (NUM_SLOTS - 1)) {
-				memcpy(&syllable_final[i][31], &one, 1); /* last syllable bit */
-				memcpy(&syllable_final[i][34], &eol, 1); /* VHDL ; end of line character */
+				syllable_final[i][32] = '1'; /* first syllable bit */
+				syllable_final[i][34] = ';'; /* VHDL ; end of line character */
 			}
 
 			fprintf(out_vhd, "\t\t\t\t                        ");
@@ -140,23 +143,24 @@ void print_instruction(int address)
 /* returns number of unresolved labels */
 int assemble()
 {
-	char *operation = malloc(10);
-	char *operands = malloc(100);
-	char *label = malloc(100);
+	char operation[64];
+	char operands[256];
+	char label[128];
 	char syl_word[33];
 	char tmp[12];
 	
 	unsigned address = 0;
-	unsigned bd, bs, rd, rs1, rs2, imm, br_imm;
-	unsigned syllable;
-	unsigned syl_type;
-	unsigned opcode;
-
+	unsigned bd, bs, rd, rs1, rs2, imm, br_imm = 0;
+	unsigned syllable = NOP;
+	unsigned syl_type = 0;
+	unsigned comment_detected = 0;
+	unsigned label_detected = 0;
+	unsigned stop_detected = 0;
+	
+	int opcode = NOP;
 	int new_instr = 0;
-	int label_detected = 0;
 	int labels_unresolved = 0;
 	int current_unresolved = 0;
-	int stop_detected = 0;
 
 	int i;
 
@@ -183,239 +187,24 @@ int assemble()
 		/* 
 		 * handle syllables 
 		 */
-
-		if (strcmp(operation, ";;") == 0) {
+		opcode = operation_to_opcode(operation);
+	
+		if (opcode != -1) {
+			 if (opcode == STOP) {
+				  stop_detected = 1;
+			 }
+		}
+		else if (strcmp(operation, ";;") == 0) {
 			new_instr = 1;
 			syllable_count = 4;
 			opcode = NOP;
 		}
-		else if (strcmp(operation, "add") == 0) {
-			opcode = ADD;
+		else if (operation[0] == '#') {
+			/* comment */
+			comment_detected = 1;
 		}
-		else if (strcmp(operation, "and") == 0) {
-			opcode = AND;
-		} 
-		else if (strcmp(operation, "andc") == 0) {
-			opcode = ANDC;
-		} 
-		else if (strcmp(operation, "max") == 0) {
-			opcode = MAX;
-		} 
-		else if (strcmp(operation, "maxu") == 0) {
-			opcode = MAXU;
-		} 
-		else if (strcmp(operation, "min") == 0) {
-			opcode = MIN;
-		} 
-		else if (strcmp(operation, "minu") == 0) {
-			opcode = MINU;
-		} 
-		else if (strcmp(operation, "or") == 0) {
-			opcode = OR;
-		} 
-		else if (strcmp(operation, "orc") == 0) {
-			opcode = ORC;
-		} 
-		else if (strcmp(operation, "sh1add") == 0) {
-			opcode = SH1ADD;
-		} 
-		else if (strcmp(operation, "sh2add") == 0) {
-			opcode = SH2ADD;
-		} 
-		else if (strcmp(operation, "sh3add") == 0) {
-			opcode = SH3ADD;
-		} 
-		else if (strcmp(operation, "sh4add") == 0) {
-			opcode = SH4ADD;
-		} 
-		else if (strcmp(operation, "shl") == 0) {
-			opcode = SHL;
-		} 
-		else if (strcmp(operation, "shr") == 0) {
-			opcode = SHR;
-		} 
-		else if (strcmp(operation, "shru") == 0) {
-			opcode = SHRU;
-		} 
-		else if (strcmp(operation, "sub") == 0) {
-			opcode = SUB;
-		} 
-		else if (strcmp(operation, "sxtb") == 0) {
-			opcode = SXTB;
-		} 
-		else if (strcmp(operation, "sxth") == 0) {
-			opcode = SXTH;
-		} 
-		else if (strcmp(operation, "zxtb") == 0) {
-			opcode = ZXTB;
-		} 
-		else if (strcmp(operation, "zxth") == 0) {
-			opcode = ZXTH;
-		} 
-		else if (strcmp(operation, "xor") == 0) {
-			opcode = XOR;
-		} 
-		else if (strcmp(operation, "mov") == 0) {
-			opcode = MOV;
-		} 
-		else if (strcmp(operation, "cmpeq") == 0) {
-			opcode = CMPEQ;
-		} 
-		else if (strcmp(operation, "cmpge") == 0) {
-			opcode = CMPGE;
-		} 
-		else if (strcmp(operation, "cmpgeu") == 0) {
-			opcode = CMPGEU;
-		} 
-		else if (strcmp(operation, "cmpgt") == 0) {
-			opcode = CMPGT;
-		} 
-		else if (strcmp(operation, "cmpgtu") == 0) {
-			opcode = CMPGTU;
-		} 
-		else if (strcmp(operation, "cmple") == 0) {
-			opcode = CMPLE;
-		} 
-		else if (strcmp(operation, "cmpleu") == 0) {
-			opcode = CMPLEU;
-		} 
-		else if (strcmp(operation, "cmplt") == 0) {
-			opcode = CMPLT;
-		} 
-		else if (strcmp(operation, "cmpltu") == 0) {
-			opcode = CMPLTU;
-		} 
-		else if (strcmp(operation, "cmpne") == 0) {
-			opcode = CMPNE;
-		} 
-		else if (strcmp(operation, "nandl") == 0) {
-			opcode = NANDL;
-		} 
-		else if (strcmp(operation, "norl") == 0) {
-			opcode = NORL;
-		} 
-		else if (strcmp(operation, "orl") == 0) {
-			opcode = ORL;
-		} 
-		else if (strcmp(operation, "mtb") == 0) {
-			opcode = MTB;
-		} 
-		else if (strcmp(operation, "andl") == 0) {
-			opcode = ANDL;
-		} 
-		else if (strcmp(operation, "addcg") == 0) {
-			opcode = ADDCG;
-		} 
-		else if (strcmp(operation, "divs") == 0) {
-			opcode = DIVS;
-		} 
-		else if (strcmp(operation, "slct") == 0) {
-			opcode = SLCT;
-		} 
-		else if (strcmp(operation, "slctf") == 0) {
-			opcode = SLCTF;
-		} 
-		else if (strcmp(operation, "mpyll") == 0) {
-			opcode = MPYLL;
-		} 
-		else if (strcmp(operation, "mpyllu") == 0) {
-			opcode = MPYLLU;
-		} 
-		else if (strcmp(operation, "mpylh") == 0) {
-			opcode = MPYLH;
-		} 
-		else if (strcmp(operation, "mpylhu") == 0) {
-			opcode = MPYLHU;
-		} 
-		else if (strcmp(operation, "mpyhh") == 0) {
-			opcode = MPYHH;
-		}
-		else if (strcmp(operation, "mpyhhu") == 0) {
-			opcode = MPYHHU;
-		} 
-		else if (strcmp(operation, "mpyl") == 0) {
-			opcode = MPYL;
-		} 
-		else if (strcmp(operation, "mpylu") == 0) {
-			opcode = MPYLU;
-		} 
-		else if (strcmp(operation, "mpyh") == 0) {
-			opcode = MPYH;
-		} 
-		else if (strcmp(operation, "mpyhu") == 0) {
-			opcode = MPYHU;
-		} 
-		else if (strcmp(operation, "mpyhs") == 0) {
-			opcode = MPYHS;
-		} 
-		else if (strcmp(operation, "goto") == 0) {
-			opcode = GOTO;
-		} 
-		else if (strcmp(operation, "igoto") == 0) {
-			opcode = IGOTO;
-		} 
-		else if (strcmp(operation, "call") == 0) {
-			opcode = CALL;
-		} 
-		else if (strcmp(operation, "icall") == 0) {
-			opcode = ICALL;
-		} 
-		else if (strcmp(operation, "br") == 0) {
-			opcode = BR;
-		} 
-		else if (strcmp(operation, "brf") == 0) {
-			opcode = BRF;
-		} 
-		else if (strcmp(operation, "return") == 0) {
-			opcode = RETURN;
-		} 
-		else if (strcmp(operation, "rfi") == 0) {
-			opcode = RFI;
-		}
-		else if (strcmp(operation, "xnop") == 0) {
-			opcode = XNOP;
-		} 
-		else if (strcmp(operation, "send") == 0) {
-			opcode = SEND;
-		} 
-		else if (strcmp(operation, "recv") == 0) {
-			opcode = RECV;
-		} 
-		else if (strcmp(operation, "ldw") == 0) {
-			opcode = LDW;
-		} 
-		else if (strcmp(operation, "ldh") == 0) {
-			opcode = LDH;
-		} 
-		else if (strcmp(operation, "ldhu") == 0) {
-			opcode = LDHU;
-		} 
-		else if (strcmp(operation, "ldb") == 0) {
-			opcode = LDB;
-		} 
-		else if (strcmp(operation, "ldbu") == 0) {
-			opcode = LDBU;
-		} 
-		else if (strcmp(operation, "stw") == 0) {
-			opcode = STW;
-		} 
-		else if (strcmp(operation, "sth") == 0) {
-			opcode = STH;
-		} 
-		else if (strcmp(operation, "stb") == 0) {
-			opcode = STB;
-		} 
-		else if (strcmp(operation, "pft") == 0) {
-			opcode = PFT;
-		} 
-		else if (strcmp(operation, "nop") == 0) {
-			opcode = NOP;
-		}
-		else if (strcmp(operation, "stop") == 0) {
-			opcode = STOP;
-			stop_detected = 1;
-		}
-		else { /* label */
+		else { 
+			/* label */
 			for (i = 0; i < num_labels; i++) {
 				if (strcmp(labels[i].name, operation) == 0) {
 					labels[i].address = address;
@@ -438,7 +227,7 @@ int assemble()
 		/*
 		 * determine syllable type
 		 */
-		if ((new_instr != 1) && (label_detected != 1) && (stop_detected != 1)) {
+		if ((new_instr != 1) && (comment_detected != 1) && (label_detected != 1) && (stop_detected != 1)) {
 			if (sscanf(operands, "$r0.%d=$r0.%d,$r0.%d", &rd, &rs1, &rs2) == 3) {
 				/* regular ALU and MUL operations */
 				sprintf(operands, "$r0.%d = $r0.%d, $r0.%d", rd, rs1, rs2);
@@ -732,7 +521,7 @@ int assemble()
 		}
 
 			
-		if (label_detected != 1) {
+		if ((label_detected != 1) && (comment_detected != 1)) {
 			if (syllable_count == 4) {
 				print_instruction(address);
 	
@@ -766,23 +555,21 @@ int assemble()
 				syllable_count++;
 			}
 		}
-		else {
+		else if (label_detected == 1) {
 			fprintf(out_vhd, "\t\t\t\t                                                            -- %s\n", labels[num_labels - 1].name);
 		}
 
 		label_detected = 0;
+		comment_detected = 0;
 	}
 
 	return labels_unresolved;
-
-	free(operation);
-	free(operands);
-	free(label);
 }
 
+/* prints help */
 void print_usage()
 {
-	printf("r-ASM %.1f -- The r-VEX assembler/instruction ROM generator\n\n", VERSION);
+	printf("r-ASM -- The r-VEX assembler/instruction ROM generator\n\n");
 	printf("Usage: rasm [options] file\n");
 	printf("Options:\n");
 	printf("  %-12s%-30s\n", "-o <file>", "Place the output into <file> (default is i_mem.vhd)");
@@ -796,11 +583,11 @@ int main(int argc, char **argv)
 	int opt;
 	int label_output = 0;
 	char outfile[32];
-	char flags[64];
+	char flags[72];
 	int i;
 	
-	strcpy(outfile, "i_mem.vhd");
 	strcpy(flags, argv[0]);
+	strcpy(outfile, "i_mem.vhd");
 	
 	if (argc == 1) {     /* no commandline arguments given */
 		 print_usage();
@@ -810,7 +597,7 @@ int main(int argc, char **argv)
 	while ((opt = getopt(argc, argv, "o:lh")) != -1) {
 		switch (opt) {
 			case 'o':  /* alternative output file */
-				sscanf(optarg, "%s", outfile);
+				strncpy(outfile, optarg, 31);
 				break;
 			case 'l':  /* print label debug output */
 				label_output = 1;
@@ -831,7 +618,7 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 	
-	out_vhd = fopen(outfile, "w+");
+	out_vhd = fopen(outfile, "w");
 
 	if (!out_vhd) {
 		fprintf(stderr, "ERROR: Could not open output file\n");
@@ -839,7 +626,8 @@ int main(int argc, char **argv)
 	}
 	
 	for (i = 1; i < argc; i++) {
-		sprintf(flags, "%s %s", flags, argv[i]);
+		strcat(flags, " ");
+		strcat(flags, argv[i]);
 	}
 	
 	/* print VHDL header to output file */
