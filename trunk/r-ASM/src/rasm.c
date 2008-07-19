@@ -83,9 +83,6 @@ void print_instruction(int address)
 	int j = 0;
 	int k = 0;
 	
-	char eol = ';';
-	char one = '1';
-
 	/* sort MEM, CTRL and MUL operations in the corresponding slots */
 	for (i = 0; i < NUM_SLOTS; i++) {
 		if (syllable_func[i] == MEM) {
