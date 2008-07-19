@@ -108,10 +108,10 @@ begin\n\
 void vhdl_footer()
 {
 	char *footer = "\
-\t\t\t\twhen others => instr <= \"00000000000000000000000000000001\"& -- nop\n\
+\t\t\t\twhen others => instr <= \"00000000000000000000000000000010\"& -- nop\n\
 \t\t\t\t                        \"00000000000000000000000000000000\"& -- nop\n\
 \t\t\t\t                        \"00000000000000000000000000000000\"& -- nop\n\
-\t\t\t\t                        \"00111110000000000000000000000010\"; -- stop\n\
+\t\t\t\t                        \"00111110000000000000000000000001\"; -- stop\n\
 \t\t\tend case;\n\
 \t\tend if;\n\
 \tend process memory;\n\
