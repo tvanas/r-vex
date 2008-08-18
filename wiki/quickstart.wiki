@@ -1,5 +1,4 @@
 #labels Featured,Phase-Deploy,Phase-Requirements
-
 http://r-vex.googlecode.com/svn/wiki/img/r-vex_logo_300.png
 
 =Quickstart Guide for XUP V2P FPGA Board=
@@ -79,9 +78,9 @@ mv i_mem.vhd ../../r-VEX/src/
 To see more options of ρ-ASM (like enabling debug output) run the application without any arguments. Some demo applications with their corresponding outputs can be found in the [http://code.google.com/p/r-vex/source/browse/trunk/demos demos] directory.
 
 
-==Running ModelSim Simulations==
+==Running Modelsim Simulations==
 
-To run ModelSim simulations within the workflow, you should have installed a version of Mentor Graphics ModelSim (we simulated with the SE 6.3d edition). To run the simulations using the system wrapper testbench [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/testbenches/tb_system.vhd r-VEX/testbenches/tb_system.vhd] (which simulates the execution of the current instruction memory in [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/src/i_mem.vhd i_mem.vhd]), enter the following command in [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/src/ r-VEX/src/]:
+To run Modelsim simulations within the workflow, you should have installed a version of Mentor Graphics Modelsim (we simulated with the SE 6.3d edition). To run the simulations using the system wrapper testbench [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/testbenches/tb_system.vhd r-VEX/testbenches/tb_system.vhd] (which simulates the execution of the current instruction memory in [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/src/i_mem.vhd i_mem.vhd]), enter the following command in [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/src/ r-VEX/src/]:
 {{{
 make modelsim
 }}}
