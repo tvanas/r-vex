@@ -1,4 +1,5 @@
 #labels Featured,Phase-Deploy,Phase-Requirements
+
 http://r-vex.googlecode.com/svn/wiki/img/r-vex_logo_300.png
 
 =Quickstart Guide for XUP V2P FPGA Board=
@@ -105,5 +106,3 @@ XIL_PART_r-vex_<mnemonic> = <xilinx_identifier>
   # Create a new _Make_ target `r-vex_<mnemonic>.cmd` and let it write the commands for Xilinx IMPACT to program your FPGA.^2^
 
 ^2^As a reference, you could use the _Make_ target with the mnemonic `v2p`.
-
-
