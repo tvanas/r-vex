@@ -48,13 +48,82 @@ http://r-vex.googlecode.com/svn/wiki/img/r-vex_logo_300.png
 || DIVS  || IV||  `1110---` ||  `ALU_DIVS ` || Division step with carry and generate carry || 
 || SLCT  || III||  `0111---` ||  `ALU_SLCT ` || Select `s1` on true condition. (exceptional opcode) || 
 || SLCTF || III||  `0110---` ||  `ALU_SLCTF` || Select `s1` on false condition. (exceptional opcode) ||  
-|| N/A|| N/A|| `1000000`  || N/A||  ALU $\rho$-OP  || 
-|| N/A|| N/A|| `1000010`  || N/A||  ALU $\rho$-OP  || 
-|| N/A|| N/A|| `1100101`  || N/A||  ALU $\rho$-OP  || 
-|| N/A|| N/A|| `1101001`  || N/A||  ALU $\rho$-OP  || 
-|| N/A|| N/A|| `1101010`  || N/A||  ALU $\rho$-OP  || 
-|| N/A|| N/A|| `1101011`  || N/A||  ALU $\rho$-OP  || 
-|| N/A|| N/A|| `1101100`  || N/A||  ALU $\rho$-OP  || 
-|| N/A|| N/A|| `1101101`  || N/A||  ALU $\rho$-OP  || 
-|| N/A|| N/A|| `1101110`  || N/A||  ALU $\rho$-OP  || 
-|| N/A|| N/A|| `1101111`  || N/A||  ALU $\rho$-OP  ||
+|| N/A|| N/A|| `1000000`  || N/A||  ALU r-OP  || 
+|| N/A|| N/A|| `1000010`  || N/A||  ALU r-OP  || 
+|| N/A|| N/A|| `1100101`  || N/A||  ALU r-OP  || 
+|| N/A|| N/A|| `1101001`  || N/A||  ALU r-OP  || 
+|| N/A|| N/A|| `1101010`  || N/A||  ALU r-OP  || 
+|| N/A|| N/A|| `1101011`  || N/A||  ALU r-OP  || 
+|| N/A|| N/A|| `1101100`  || N/A||  ALU r-OP  || 
+|| N/A|| N/A|| `1101101`  || N/A||  ALU r-OP  || 
+|| N/A|| N/A|| `1101110`  || N/A||  ALU r-OP  || 
+|| N/A|| N/A|| `1101111`  || N/A||  ALU r-OP  ||
+
+==MUL Operations==
+
+|| *Operation* || *Type* || *Opcode* || *Mnemonic* || *Description* ||
+||MPYLL  ||I|| `0000001` || `MUL_MPYLL ` ||Multiply signed low 16 x low 16 bits ||
+||MPYLLU ||I|| `0000010` || `MUL_MPYLLU` ||Multiply unsigned low 16 x low 16 bits ||
+||MPYLH  ||I|| `0000011` || `MUL_MPYLH ` ||Multiply signed low 16 (`s1`) x high 16 (`s2`) bits ||
+||MPYLHU ||I|| `0000100` || `MUL_MPYLHU` ||Multiply unsigned low 16 (`s1`) x high 16 (`s2`) bits ||
+||MPYHH  ||I|| `0000101` || `MUL_MPYHH ` ||Multiply signed high 16 x high 16 bits ||
+||MPYHHU ||I|| `0000110` || `MUL_MPYHHU` ||Multiply unsigned high 16 x high 16 bits ||
+||MPYL   ||I|| `0000111` || `MUL_MPYL  ` ||Multiply signed low 16 (`s2`) x 32 (`s1`) bits ||
+||MPYLU  ||I|| `0001000` || `MUL_MPYLU ` ||Multiply unsigned low 16 (`s2`) x 32 (`s1`) bits ||
+||MPYH   ||I|| `0001001` || `MUL_MPYH  ` ||Multiply signed high 16 (`s2`) x 32 (`s1`) bits ||
+||MPYHU  ||I|| `0001010` || `MUL_MPYHU ` ||Multiply unsigned high 16 (`s2`) x 32 (`s1`) bits ||
+||MPYHS  ||I|| `0001011` || `MUL_MPYHS ` ||Multiply signed high 16 (`s2`) x 32 (`s1`) bits, shift left 16  ||
+|| N/A||N/A||`0001100`  ||N/A|| MUL r-OP  ||
+|| N/A||N/A||`0001101`  ||N/A|| MUL r-OP  ||
+|| N/A||N/A||`0001110`  ||N/A|| MUL r-OP  ||
+|| N/A||N/A||`0001111`  ||N/A|| MUL r-OP  ||
+
+
+==CTRL Operations==
+
+|| *Operation* || *Type* || *Opcode* || *Mnemonic* || *Description* ||
+||GOTO^1^ ||XIII|| `0100001` || `CTRL_GOTO  ` ||Unconditional relative jump||
+||IGOTO^1^ ||XIX|| `0100010` || `CTRL_IGOTO ` ||Unconditional absolute indirect jump to link register||
+||CALL^1^ ||XVI|| `0100011` || `CTRL_CALL  ` ||Unconditional relative call||
+||ICALL^1^ ||XX|| `0100100` || `CTRL_ICALL ` ||Unconditional absolute indirect call to link register||
+||BR     ||VIII|| `0100101` || `CTRL_BR    ` ||Conditional relative branch on true condition||
+||BRF    ||VIII|| `0100110` || `CTRL_BRF   ` ||Conditional relative branch on false condition||
+||RETURN ||XVII|| `0100111` || `CTRL_RETRN` ||Pop stack frame and goto link register||
+||RFI    ||XIV|| `0101000` || `CTRL_RFI   ` ||Return from interrupt||
+||XNOP   ||XV|| `0101001` || `CTRL_XNOP  ` ||Multicycle NOP  ||
+|| N/A|| N/A|| `0100000`  || N/A|| CTRL r-OP  ||
+|| N/A|| N/A|| `0101100`  || N/A|| CTRL r-OP  ||
+|| N/A|| N/A|| `0101101`  || N/A|| CTRL r-OP  ||
+|| N/A|| N/A|| `0101110`  || N/A|| CTRL r-OP  ||
+|| N/A|| N/A|| `0101111`  || N/A|| CTRL r-OP  ||
+
+^1^ According a to a message on the VEX forum, the *CALL* & *ICALL* and *GOTO* & *IGOTO* operations are overloaded in the latest VEX compiler, so *ICALL* and *IGOTO* are obsolete. These are still supported in its original form to stay compliant to the original VEX ISA. See [http://www.vliw.org/vex/viewtopic.php?t=52] for more information.
+
+
+==MEM Operations==
+
+|| *Operation* || *Type* || *Opcode* || *Mnemonic* || *Description* ||
+||LDW  ||X|| `0010001` || `MEM_LDW ` ||Load word||
+||LDH  ||X|| `0010010` || `MEM_LDH ` ||Load halfword signed||
+||LDHU ||X|| `0010011` || `MEM_LDHU` ||Load halfword unsigned||
+||LDB  ||X|| `0010100` || `MEM_LDB ` ||Load byte signed||
+||LDBU ||X|| `0010101` || `MEM_LDBU` ||Load byte unsigned||
+||STW  ||XI|| `0010110` || `MEM_STW ` ||Store word||
+||STH  ||XI|| `0010111` || `MEM_STH ` ||Store halfword||
+||STB  ||XI|| `0011000` || `MEM_STB ` ||Store byte||
+||PFT  ||XII|| `0011001` || `MEM_PFT ` ||Prefetch|| 
+|| N/A|| N/A|| `0011010`  || N/A|| MEM r-OP  ||
+|| N/A|| N/A|| `0011011`  || N/A|| MEM r-OP  ||
+|| N/A|| N/A|| `0011101`  || N/A|| MEM r-OP  ||
+|| N/A|| N/A|| `0011110`  || N/A|| MEM r-OP  ||
+|| N/A|| N/A|| `0010000`  || N/A|| MEM r-OP  ||
+
+
+==Miscellaneous Operations==
+
+|| *Operation* || *Type* || *Opcode* || *Mnemonic* || *Description* ||
+||STOP  ||XIV|| `0011111` || `STOP ` ||STOP operation||
+||NOP   ||XIV|| `0000000` || `NOP  ` ||No operation  ||
+||SEND ||IX|| `0101010` || `INTR_SEND` ||Send `s1` to the path identified by `path`||
+||RECV ||XVIII|| `0101011` || `INTR_RECV` ||Assigns the value from the path identified by `path` to `t`||
+|| N/A ||N/A|| `0011100` || `SYL_FOLLOW` ||Syllable contains second half of long immediate||
