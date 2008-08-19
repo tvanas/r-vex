@@ -1,4 +1,0 @@
-* support for hexadecimal (0x) and decimal immediates
-* parametrizable support for issue width
-* fix long immediate handling
-* XNOP

@@ -52,8 +52,8 @@ package rVEX_pkg is
 
 	-- Immediate types
 	constant NO_IMM      : std_logic_vector(1 downto 0) := "00";        -- No immediate
-	constant BRANCH_IMM  : std_logic_vector(1 downto 0) := "01";        -- Branch offset immediate
-	constant SHORT_IMM   : std_logic_vector(1 downto 0) := "10";        -- Short immediate
+	constant SHORT_IMM   : std_logic_vector(1 downto 0) := "01";        -- Short immediate
+	constant BRANCH_IMM  : std_logic_vector(1 downto 0) := "10";        -- Branch offset immediate
 	constant LONG_IMM    : std_logic_vector(1 downto 0) := "11";        -- Long immediate
 	
 	-- Writeback targets

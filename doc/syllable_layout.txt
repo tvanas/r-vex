@@ -63,8 +63,8 @@ Symbol declaration in syllable layout:
 
 	S S : Immediate switch
 	      0 0 = NO_IMM      no immediate value
-	      0 1 = BRANCH_IMM  branch offset immediate
-	      1 0 = SHORT_IMM   short immediate
+	      0 1 = SHORT_IMM   short immediate
+	      1 0 = BRANCH_IMM  branch offset immediate
 	      1 1 = LONG_IMM    long immediate
 	
 	-   : Don't care
@@ -88,7 +88,7 @@ ALU / MUL syllables
 	 31              23              15              7             0
 	 ^               ^               ^               ^             ^
 	|             |   |           |           |                 | | |
-	|o o o o o o o|1 0|d d d d d d|a a a a a a|i i i i i i i i i|L|F|
+	|o o o o o o o|0 1|d d d d d d|a a a a a a|i i i i i i i i i|L|F|
 	|             |S S|           |           |                 | | |
 
 
@@ -136,7 +136,7 @@ ALU / MUL syllables
 	 31              23              15              7             0
 	 ^               ^               ^               ^             ^
 	|             |   |           |           |                 | | |
-	|o o o o j j j|1 0|d d d d d d|a a a a a a|i i i i i i i i i|L|F|
+	|o o o o j j j|0 1|d d d d d d|a a a a a a|i i i i i i i i i|L|F|
 	|        * * *|S S|           |           |                 | | |
 
 
@@ -252,7 +252,7 @@ CTRL syllables
 	 31              23              15              7             0
 	 ^               ^               ^               ^             ^
 	|             |   |           |                       |     | | |
-	|o o o o o o o|0 1|- - - - - -|f f f f f f f f f f f f|- - -|L|F|
+	|o o o o o o o|1 0|- - - - - -|f f f f f f f f f f f f|- - -|L|F|
 	|             |S S|           |                       |     | | |
 
 
@@ -294,7 +294,7 @@ CTRL syllables
 	 31              23              15              7             0
 	 ^               ^               ^               ^             ^
 	|             |   |           |                       |     | | |
-	|o o o o o o o|0 1|l l l l l l|f f f f f f f f f f f f|- - -|L|F|
+	|o o o o o o o|1 0|l l l l l l|f f f f f f f f f f f f|- - -|L|F|
 	|             |S S|           |                       |     | | |
 
 
@@ -311,7 +311,7 @@ CTRL syllables
 	 31              23              15              7             0
 	 ^               ^               ^               ^             ^
 	|             |   |           |                       |     | | |
-	|o o o o o o o|0 1|- - - - - -|f f f f f f f f f f f f|j j j|L|F|
+	|o o o o o o o|1 0|- - - - - -|f f f f f f f f f f f f|j j j|L|F|
 	|             |S S|           |                       |     | | |
 
 
@@ -327,7 +327,7 @@ CTRL syllables
 	 31              23              15              7             0
 	 ^               ^               ^               ^             ^
 	|             |   |           |                       |     | | |
-	|o o o o o o o|0 1|l l l l l l|f f f f f f f f f f f f|- - -|L|F|
+	|o o o o o o o|1 0|l l l l l l|f f f f f f f f f f f f|- - -|L|F|
 	|             |S S|           |                       |     | | |
 
 	

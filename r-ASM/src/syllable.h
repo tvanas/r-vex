@@ -67,8 +67,8 @@
  * values according to 'immediate switch' bits
  */
 #define NO_IMM     0 
-#define BRANCH_IMM 1
-#define SHORT_IMM  2
+#define SHORT_IMM  1
+#define BRANCH_IMM 2
 #define LONG_IMM   3
 
 /* 
