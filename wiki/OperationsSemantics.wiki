@@ -1,0 +1,60 @@
+#labels Featured,Phase-Implementation,Phase-Requirements
+http://r-vex.googlecode.com/svn/wiki/img/r-vex_logo_300.png
+
+=VEX Operations and Semantics=
+
+==ALU Operations==
+
+|| *Operation* || *Type* || *Opcode* || *Mnemonic* || *Description* ||
+|| ADD    ||  I ||  `1000001` ||  `ALU_ADD   ` || Add || 
+|| AND    ||  I ||  `1000011` ||  `ALU_AND   ` || Bitwise AND || 
+|| ANDC   || I||  `1000100` ||  `ALU_ANDC  ` || Bitwise complement and AND || 
+|| MAX    || I||  `1000101` ||  `ALU_MAX   ` || Maximum signed || 
+|| MAXU   ||  I ||  `1000110` ||  `ALU_MAXU  ` || Maximum unsigned || 
+|| MIN    ||  I ||  `1000111` ||  `ALU_MIN   ` || Minimum signed || 
+|| MINU   ||  I ||  `1001000` ||  `ALU_MINU  ` || Minimum unsigned || 
+|| OR     ||  I ||  `1001001` ||  `ALU_OR    ` || Bitwise OR || 
+|| ORC    || I||  `1001010` ||  `ALU_ORC   ` || Bitwise complement and OR || 
+|| SH1ADD || I||  `1001011` ||  `ALU_SH1ADD` || Shift left 1 and add || 
+|| SH2ADD || I||  `1001100` ||  `ALU_SH2ADD` || Shift left 2 and add || 
+|| SH3ADD || I||  `1001101` ||  `ALU_SH3ADD` || Shift left 3 and add || 
+|| SH4ADD || I||  `1001110` ||  `ALU_SH4ADD` || Shift left 4 and add || 
+|| SHL    || I||  `1001111` ||  `ALU_SHL   ` || Shift left || 
+|| SHR    || I||  `1010000` ||  `ALU_SHR   ` || Shift right signed || 
+|| SHRU   || I||  `1010001` ||  `ALU_SHRU  ` || Shift right unsigned || 
+|| SUB    || VI||  `1010010` ||  `ALU_SUB   ` || Subtract || 
+|| SXTB   || VII||  `1010011` ||  `ALU_SXTB  ` || Sign extend byte || 
+|| SXTH   || VII||  `1010100` ||  `ALU_SXTH  ` || Sign extend half word || 
+|| ZXTB   || VII||  `1010101` ||  `ALU_ZXTB  ` || Zero extend byte || 
+|| ZXTH   || VII||  `1010110` ||  `ALU_ZXTH  ` || Zero extend half word || 
+|| XOR    || I||  `1010111` ||  `ALU_XOR   ` || Bitwise XOR || 
+|| MOV    || VII||  `1011000` ||  `ALU_MOV   ` || Copy `s1` to other location || 
+|| CMPEQ  || II||  `1011001` ||  `ALU_CMPEQ ` || Compare: equal || 
+|| CMPGE  || II||  `1011010` ||  `ALU_CMPGE ` || Compare: greater equal signed || 
+|| CMPGEU || II||  `1011011` ||  `ALU_CMPGEU` || Compare: greater equal unsigned || 
+|| CMPGT  || II||  `1011100` ||  `ALU_CMPGT ` || Compare: greater signed || 
+|| CMPGTU || II||  `1011101` ||  `ALU_CMPGTU` || Compare: greater unsigned || 
+|| CMPLE  || II||  `1011110` ||  `ALU_CMPLE ` || Compare: less than equal signed || 
+|| CMPLEU || II||  `1011111` ||  `ALU_CMPLEU` || Compare: less than equal unsigned || 
+|| CMPLT  || II||  `1100000` ||  `ALU_CMPLT ` || Compare: less than signed || 
+|| CMPLTU || II||  `1100001` ||  `ALU_CMPLTU` || Compare: less than unsigned || 
+|| CMPNE  || II||  `1100010` ||  `ALU_CMPNE ` || Compare: not equal || 
+|| NANDL  || II||  `1100011` ||  `ALU_NANDL ` || Logical NAND || 
+|| NORL   || II||  `1100100` ||  `ALU_NORL  ` || Logical NOR || 
+|| ORL    || II||  `1100110` ||  `ALU_ORL   ` || Logical OR || 
+|| MTB    || V||  `1100111` ||  `ALU_MTB   ` || Move GR to BR || 
+|| ANDL   || II||  `1101000` ||  `ALU_ANDL  ` || Logical AND || 
+|| ADDCG || IV||  `1111---` ||  `ALU_ADDCG` || Add with carry and generate carry. || 
+|| DIVS  || IV||  `1110---` ||  `ALU_DIVS ` || Division step with carry and generate carry || 
+|| SLCT  || III||  `0111---` ||  `ALU_SLCT ` || Select `s1` on true condition. (exceptional opcode) || 
+|| SLCTF || III||  `0110---` ||  `ALU_SLCTF` || Select `s1` on false condition. (exceptional opcode) ||  
+|| N/A|| N/A|| `1000000`  || N/A||  ALU $\rho$-OP  || 
+|| N/A|| N/A|| `1000010`  || N/A||  ALU $\rho$-OP  || 
+|| N/A|| N/A|| `1100101`  || N/A||  ALU $\rho$-OP  || 
+|| N/A|| N/A|| `1101001`  || N/A||  ALU $\rho$-OP  || 
+|| N/A|| N/A|| `1101010`  || N/A||  ALU $\rho$-OP  || 
+|| N/A|| N/A|| `1101011`  || N/A||  ALU $\rho$-OP  || 
+|| N/A|| N/A|| `1101100`  || N/A||  ALU $\rho$-OP  || 
+|| N/A|| N/A|| `1101101`  || N/A||  ALU $\rho$-OP  || 
+|| N/A|| N/A|| `1101110`  || N/A||  ALU $\rho$-OP  || 
+|| N/A|| N/A|| `1101111`  || N/A||  ALU $\rho$-OP  ||
