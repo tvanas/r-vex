@@ -127,3 +127,34 @@ http://r-vex.googlecode.com/svn/wiki/img/r-vex_logo_300.png
 ||SEND ||IX|| `0101010` || `INTR_SEND` ||Send `s1` to the path identified by `path`||
 ||RECV ||XVIII|| `0101011` || `INTR_RECV` ||Assigns the value from the path identified by `path` to `t`||
 || N/A ||N/A|| `0011100` || `SYL_FOLLOW` ||Syllable contains second half of long immediate||
+
+==VEX Semantics==
+|| *Type* || *Semantics* ||
+||I  || `operation $r0.t = $r0.s1, $r0.s2` ||
+||   || `operation $r0.t = $r0.s1, s2` ||
+||II || `operation $r0.t = $r0.s1, $r0.s2`  ||
+||   || `operation $r0.t = $r0.s1, s2` ||
+||   || `operation $b0.b = $r0.s1, $r0.s2` ||
+||   || `operation $b0.b = $r0.s1, s2` ||
+||III  || `operation $r0.t = $b0.b1, $r0.s1, $r0.s2`  ||
+||	|| `operation $r0.t = $b0.b1, $r0.s1, s2`  ||
+||IV  ||  `operation $r0.t, $b0.b = $b0.b1, $r0.s1, $r0.s2`  ||
+||V  || `operation $b0.b = $r0.s1`  ||
+||VI  || `operation $r0.t = $r0.s2, $r0.s1`  ||
+||	|| `operation $r0.t = s2, $r0.s1`  ||
+||VII  || `operation $r0.t = $r0.s1`  ||
+||VIII  || `operation $b0.b, label`  ||
+||IX  || `operation $r0.s1, path`  ||
+||X  || `operation $r0.t = offset[$r0.s1]`  ||
+||XI  || `operation offset[$r0.s1] = $r0.s2`  ||
+||XII  || `operation offset[$r0.s1]`  ||
+||XIII  || `operation label`  ||
+|| ||`operation $r0.lr`  ||
+||XIV  || `operation`  ||
+||XV  || `operation n`  ||
+||XVI || `operation $l0.t = label`  ||
+|| ||`operation $l0.t = $l0.t`||
+||XVII  || `operation $r0.t = $r0.t, label, $r0.lr`  ||
+||XVIII  || `operation $r0.t = path`  ||
+||XIX  || `operation $r0.lr`  ||
+||XX  || `operation $l0.t = $l0.t`  ||
