@@ -1,5 +1,0 @@
-* Change immediate switch values according to paper
-* Fix ALU/logical operations where BR is target and immediate operands
-  are used.
-* Add separate link register $l0.0 instead of using $r0.63
-
