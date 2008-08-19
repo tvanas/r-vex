@@ -158,3 +158,12 @@ http://r-vex.googlecode.com/svn/wiki/img/r-vex_logo_300.png
 ||XVIII  || `operation $r0.t = path`  ||
 ||XIX  || `operation $r0.lr`  ||
 ||XX  || `operation $l0.t = $l0.t`  ||
+
+||`operation` || The operation as presented in one of the lists above, lowercase ||
+||`$r0.#` || GR register where `#` can be  `t` (target), `s1` (source 1), `s2` (source 2) or `lr` (link register) ||
+||`$b0.#` || BR register where `#` can be `b` (target) or `b1` (source 1) ||
+||`s2` || Immediate operand (without preceeding `$r0.`) ||
+||`label` || Label to jump to when branching ||
+||`offset` || Offset used when loading or storing to data memory ||
+||`n` || Number of cycles (in *XNOP*) ||
+||`path` || Path for sending/receiving inter-cluster contents (unsupported in r-VEX) ||
