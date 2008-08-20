@@ -5,6 +5,7 @@
 -- Copyright (c) 2008, Thijs van As <t.vanas@gmail.com>
 --
 -- Computer Engineering Laboratory
+-- Faculty of Electrical Engineering, Mathematics and Computer Science
 -- Delft University of Technology
 -- Delft, The Netherlands
 --

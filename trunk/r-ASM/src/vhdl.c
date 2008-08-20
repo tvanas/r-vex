@@ -3,6 +3,7 @@
  * Copyright (c) 2008, Thijs van As <t.vanas@gmail.com>
  *
  * Computer Engineering Laboratory
+ * Faculty of Electrical Engineering, Mathematics and Computer Science
  * Delft University of Technology
  * Delft, The Netherlands
  * 
@@ -60,6 +61,7 @@ void vhdl_header(char *src_file, char *flags, char *dest_file)
 -- Copyright (c) 2008, Thijs van As <t.vanas@gmail.com>\n\
 -- \n\
 -- Computer Engineering Laboratory\n\
+-- Faculty of Electrical Engineering, Mathematics and Computer Science\n\
 -- Delft University of Technology\n\
 -- Delft, The Netherlands\n\
 -- \n\
