@@ -599,13 +599,7 @@ begin
 			when wait_mul =>
 				next_state <= execute;
 			when execute =>
-				if (alu0_out_valid_s = '1' or alu1_out_valid_s = '1'
-				      or alu2_out_valid_s = '1' or alu3_out_valid_s = '1'
-				      or mul1_out_valid_s = '1' or mul2_out_valid_s = '1') then
-					next_state <= output;
-				else
-					next_state <= execute;
-				end if;				
+				next_state <= output;
 			when output =>
 				next_state <= waiting;
 		end case;
