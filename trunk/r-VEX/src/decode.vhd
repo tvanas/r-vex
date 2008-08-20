@@ -41,7 +41,6 @@ use work.rVEX_pkg.all;
 entity decode is
 	port ( clk             : in std_logic; -- system clock
 	       reset           : in std_logic; -- system reset
-	       exe_in          : in std_logic; -- '1' when execute stage accepts input
 	       new_decode      : in std_logic; -- '1' when execute output is valid
 	       fetch_ok        : in std_logic; -- '1' when syllable is fetched
 	       start           : in std_logic; -- '1' when input is valid
@@ -149,7 +148,7 @@ begin
 
 	-- Controls outputs of decode stage
 	decode_out: process(current_state, syllable_0, syllable_1, address_dr_3_s,
-	                      data_r1_0, data_r2_0, data_rb_0, exe_in, syllable_2, 
+	                      data_r1_0, data_r2_0, data_rb_0, syllable_2, 
 	                      syllable_3, data_r1_1, data_r2_1, data_rb_1, data_r1_2,
 	                      data_r2_2, data_rb_2, data_r1_3, data_r2_3, data_rb_3)
 	begin
@@ -352,10 +351,6 @@ begin
 				address_destb_1 <= syllable_1(4 downto 2);
 				target_1 <= (others => '0');
 
-				ops_ready <= '0';
-				accept_in_i <= '0';			
-				done_i <= '0';
-
 				-------------------------
 				-- syllable 2 handling --
 				-------------------------
@@ -370,10 +365,6 @@ begin
 				address_dest_2 <= syllable_2(22 downto 17);
 				address_destb_2 <= syllable_2(4 downto 2);
 				target_2 <= (others => '0');
-
-				ops_ready <= '0';
-				accept_in_i <= '0';			
-				done_i <= '0';
 
 				-------------------------
 				-- syllable 3 handling --
@@ -549,7 +540,6 @@ begin
 				elsif (std_match(syllable_1(31 downto 25), ALU_MTB)) then
 					-- ALU operation with BR dest
 					target_1 <= WRITE_B;
-					done_i <= '0';
 					branch_dest_1 <= '0';
 				elsif (syllable_1(31 downto 25) >= ALU_CMPEQ and 
 				         syllable_1(31 downto 25) <= ALU_ANDL) then
@@ -568,9 +558,6 @@ begin
 					branch_dest_1 <= '0';
 					target_1 <= WRITE_G;
 				end if;
-
-				accept_in_i <= '0';			
-				ops_ready <= exe_in;	
 
 				-------------------------
 				-- syllable 2 handling --
@@ -602,7 +589,6 @@ begin
 				elsif (std_match(syllable_2(31 downto 25), ALU_MTB)) then
 					-- ALU operation with BR dest
 					target_2 <= WRITE_B;
-					done_i <= '0';
 					branch_dest_2 <= '0';
 				elsif (syllable_2(31 downto 25) >= ALU_CMPEQ and
 				         syllable_2(31 downto 25) <= ALU_ANDL) then
@@ -661,7 +647,6 @@ begin
 				elsif (std_match(syllable_3(31 downto 25), ALU_MTB)) then
 					-- ALU operation with BR dest
 					target_3 <= WRITE_B;
-					done_i <= '0';
 					branch_dest_3 <= '0';
 				elsif (syllable_3(31 downto 25) >= ALU_CMPEQ and
 				         syllable_3(31 downto 25) <= ALU_ANDL) then
@@ -678,7 +663,6 @@ begin
 					target_3 <= WRITE_NOP;
 				elsif (std_match(syllable_3(31 downto 25), MEM_OP)) then
 					-- MEM operation
-					done_i <= '0';
 					branch_dest_0 <= '0';
 					
 					if (std_match(syllable_3(31 downto 25), MEM_STW) or
@@ -696,13 +680,13 @@ begin
 					target_3 <= WRITE_G;
 				end if;
 
+				ops_ready <= '1';
 				accept_in_i <= '0';			
-				ops_ready <= exe_in;		
 		end case;
 	end process decode_out;
 
 	-- Controls syllable decode states
-	decode_control: process(clk, current_state, fetch_ok, exe_in, new_decode, start)
+	decode_control: process(clk, current_state, fetch_ok, new_decode, start)
 	begin
 		case current_state is
 			when reset_state =>			
@@ -714,11 +698,7 @@ begin
 					next_state <= waiting;
 				end if;
 			when fetch_regs =>
-				if (exe_in = '1') then
-					next_state <= send_operands;
-				else
-					next_state <= fetch_regs;
-				end if;
+				next_state <= send_operands;
 			when send_operands =>
 				if (new_decode = '1' and start = '1') then
 					next_state <= waiting;
