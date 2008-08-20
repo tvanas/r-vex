@@ -37,7 +37,7 @@ use work.rVEX_pkg.all;
 entity execute is
 	port ( clk           : in std_logic; -- system clock
 	       reset         : in std_logic; -- system reset
-	       start         : in std_logic; -- '1' when input is valid
+	       in_valid      : in std_logic; -- '1' when input is valid
 	       -- syllable 0 related inputs
 	       opcode_0      : in std_logic_vector(6 downto 0);  -- opcode
 	       operand1_0    : in std_logic_vector(31 downto 0); -- operand 1
@@ -76,7 +76,6 @@ entity execute is
 	       result_3      : out std_logic_vector(31 downto 0); -- result of ALU or MUL operation
 	       resultb_3     : out std_logic;                     -- branch result of ALU or MUL operation
 
-	       accept_in     : out std_logic;  -- '1' when accepting new input
 	       out_valid     : out std_logic); -- '1' when results are valid
 end entity execute;
 
@@ -238,7 +237,6 @@ begin
 	                           alu2_cout_s, alu3_result_s, branch_dest_3,
 	                           alu3_cout_s)
 	begin
-		accept_in <= 'X';
 		out_valid <= 'X';
 
 		-------------------------
@@ -275,7 +273,6 @@ begin
 		
 		case current_state is
 			when reset_state =>
-				accept_in <= '0';
 				out_valid <= '0';
 
 				-------------------------
@@ -318,7 +315,6 @@ begin
 				operand2_3_s <= (others => '0');
 				operandb_3_s <= '0';
 			when waiting =>
-				accept_in <= '1';
 				out_valid <= '0';		
 
 				-------------------------
@@ -361,7 +357,6 @@ begin
 				operand2_3_s <= operand2_3;
 				operandb_3_s <= operandb_3;
 			when wait_mul =>
-				accept_in <= '0';
 				out_valid <= '0';
 
 				-------------------------
@@ -436,7 +431,6 @@ begin
 				operand2_3_s <= operand2_3;
 				operandb_3_s <= operandb_3;
 			when execute =>
-				accept_in <= '0';
 				out_valid <= '1';
 
 				-------------------------
@@ -511,7 +505,6 @@ begin
 				operand2_3_s <= operand2_3;
 				operandb_3_s <= operandb_3;
 			when output =>
-				accept_in <= '0';
 				out_valid <= '1';
 
 				-------------------------
@@ -568,7 +561,7 @@ begin
 	end process execute_output;
 	
 	-- Controls execute stage
-	execute_control : process(clk, current_state, start, alu0_out_valid_s,
+	execute_control : process(clk, current_state, in_valid, alu0_out_valid_s,
 	                            alu1_out_valid_s, opcode_0, opcode_1, opcode_2,
 	                            opcode_3, alu2_out_valid_s, alu3_out_valid_s)
 	begin
@@ -576,7 +569,7 @@ begin
 			when reset_state =>
 				next_state <= waiting;
 			when waiting =>
-				if (start = '1') then
+				if (in_valid = '1') then
 					if (opcode_0(6) = '1' or std_match(opcode_0, ALU_SLCT)
 					      or std_match(opcode_0, ALU_SLCTF) or opcode_1(6) = '1'
 					      or std_match(opcode_1, ALU_SLCT)

@@ -35,7 +35,7 @@ entity fetch is
 	port ( clk        : in std_logic; -- system clock
 	       reset      : in std_logic; -- system reset
 	       instr      : in std_logic_vector(127 downto 0); -- instruction (4 syllables)
-	       next_syl   : in std_logic; -- '1' when syllable is decoded
+	       next_instr : in std_logic; -- '1' when syllable is decoded
 	       start      : in std_logic; -- '1' when to start execution of r-VEX
 	       stop       : in std_logic; -- '1' when STOP syllable is decoded
 	       pc         : in std_logic_vector(7 downto 0);   -- current program counter
@@ -51,7 +51,7 @@ entity fetch is
 end entity fetch;
 
 architecture behavioural of fetch is
-	type fetch_states is (reset_state, waiting, send_syllable);
+	type fetch_states is (reset_state, waiting, send_syllables);
 	signal current_state, next_state: fetch_states;
 
 	signal running_s   : std_logic := '0';
@@ -122,7 +122,7 @@ begin
 				address <= pc;
 				out_valid_i <= '0';
 				running_s <= '1';
-			when send_syllable =>
+			when send_syllables =>
 				syllable_0 <= instr(31 downto 0);
 				syllable_1 <= instr(63 downto 32);
 				syllable_2 <= instr(95 downto 64);
@@ -134,7 +134,7 @@ begin
 	end process fetch_out;
 	
 	-- Controls syllable fetch stage
-	fetch_control: process(clk, current_state, start, stop_i, next_syl)
+	fetch_control: process(clk, current_state, start, stop_i, next_instr)
 	begin		
 		case current_state is
 			when reset_state =>
@@ -144,16 +144,16 @@ begin
 					next_state <= reset_state;
 				end if;
 			when waiting =>
-				if (next_syl = '1' and stop_i = '0') then
-					next_state <= send_syllable;
+				if (next_instr = '1' and stop_i = '0') then
+					next_state <= send_syllables;
 				else
 					next_state <= waiting;
 				end if;
-			when send_syllable =>
-				if (next_syl = '0' and stop_i = '0') then
+			when send_syllables =>
+				if (next_instr = '0' and stop_i = '0') then
 					next_state <= waiting;
 				else
-					next_state <= send_syllable;
+					next_state <= send_syllables;
 				end if;
 		end case;
 	end process fetch_control;

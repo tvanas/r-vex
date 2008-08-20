@@ -80,7 +80,7 @@ architecture behavioural of rVEX is
 			   address_r2_3   : in std_logic_vector(5 downto 0);
 			   address_w_0    : in std_logic_vector(5 downto 0);
 			   address_w_1    : in std_logic_vector(5 downto 0);
-		       address_w_2    : in std_logic_vector(5 downto 0);
+		           address_w_2    : in std_logic_vector(5 downto 0);
 			   address_w_3    : in std_logic_vector(5 downto 0);
 			   data_in_0      : in std_logic_vector(31 downto 0);
 			   data_in_1      : in std_logic_vector(31 downto 0);
@@ -128,7 +128,7 @@ architecture behavioural of rVEX is
 		port ( clk               : in std_logic;
 		       reset             : in std_logic;
 		       instr             : in std_logic_vector(127 downto 0);
-		       next_syl          : in std_logic;
+		       next_instr        : in std_logic;
 		       start             : in std_logic;
 		       stop              : in std_logic;
 		       pc                : in std_logic_vector(7 downto 0);
@@ -147,7 +147,6 @@ architecture behavioural of rVEX is
 	component decode is
 		port ( clk               : in std_logic;
 		       reset             : in std_logic;
-		       exe_in            : in std_logic;
 		       new_decode        : in std_logic;
 		       fetch_ok          : in std_logic;
 		       start             : in std_logic;
@@ -232,7 +231,7 @@ architecture behavioural of rVEX is
 	component execute is
 		port ( clk               : in std_logic;
 		       reset             : in std_logic;
-		       start             : in std_logic;
+		       in_valid          : in std_logic;
 
 		       opcode_0          : in std_logic_vector(6 downto 0);
 		       operand1_0        : in std_logic_vector(31 downto 0);
@@ -270,7 +269,6 @@ architecture behavioural of rVEX is
 		       result_3          : out std_logic_vector(31 downto 0);
 		       resultb_3         : out std_logic;
 
-		       accept_in         : out std_logic;
 		       out_valid         : out std_logic);
 	end component execute;
 	
@@ -490,7 +488,6 @@ architecture behavioural of rVEX is
 	signal resultb_3_s        : std_logic := '0';
 
 	signal ops_ready_s        : std_logic := '0';
-	signal accept_in_ex_s     : std_logic := '0';
 	signal out_valid_ex_s     : std_logic := '0';
 	signal out_valid_ctrl_s   : std_logic := '0';
 	signal out_valid_mem_s    : std_logic := '0';
@@ -580,7 +577,7 @@ begin
 	fetch_stage   : fetch        port map (clk => clk,
 	                                       reset => reset,
 	                                       instr => instr,
-	                                       next_syl => accept_in_dec_s,
+	                                       next_instr => accept_in_dec_s,
 	                                       start => run,
 	                                       stop => done_s,
 	                                       pc => pc_s,
@@ -596,7 +593,6 @@ begin
 
 	decode_stage  : decode       port map (clk => clk,
 	                                       reset => reset,
-	                                       exe_in => accept_in_ex_s,
 	                                       new_decode => wb_en_s,
 	                                       fetch_ok => fetch_ok_s,
 	                                       start => start_dec_s,
@@ -678,7 +674,7 @@ begin
 
 	execute_stage : execute      port map (clk => clk,
 	                                       reset => reset,
-	                                       start => ops_ready_s,
+	                                       in_valid => ops_ready_s,
 
 	                                       opcode_0 => opcode_0_s,
 	                                       operand1_0 => operand1_0_s,
@@ -716,7 +712,6 @@ begin
 	                                       result_3 => result_3_s,
 	                                       resultb_3 => resultb_3_s,
 
-	                                       accept_in => accept_in_ex_s,
 	                                       out_valid => out_valid_ex_s);
 	
 	ctrl0         : ctrl         port map (clk => clk,
