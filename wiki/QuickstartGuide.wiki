@@ -15,7 +15,7 @@ the definitions of your board to the workflow as described later.
 
 ^1^ When you want to make use of the Makefile method described below on a Windows machine, a Cygwin installation should be present with GNU Make. Xilinx EDK automatically installs a version of Cygwin. However, some GNU tools like `cat` are not included. This results in an error while bundling the log files after synthesis. This can be safely ignored.
 
-==Quickstart==
+==Quickstart - Deploying ρ-VEX on an FPGA==
   # Acquire the latest snapshot from the Downloads section at the ρ-VEX website, or checkout the latest code from the Subversion repository.
   # Inside the r-VEX/src/ directory, synthesize ρ-VEX by entering the following command:
 {{{
@@ -77,6 +77,77 @@ mv i_mem.vhd ../../r-VEX/src/
 
 To see more options of ρ-ASM (like enabling debug output) run the application without any arguments. Some demo applications with their corresponding outputs can be found in the [http://code.google.com/p/r-vex/source/browse/trunk/demos demos] directory.
 
+==Using ρ-OPS==
+This guide on adding ρ-OPS to an ρ-VEX implementation is based on the example of adding the *FIB3* and *FIB4* operations, as used in our Fibonacci's Sequence benchmark application.
+
+===Adapting ρ-VEX===
+  # Determine what Functional Units will execute the operation. An unused ρ-OPS opcode can be optained from OperationsSemantics.
+  # In   [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/src/r-vex_pkg.vhd r-vex_pkg.vhd], constant definitions should be added for the new operations:
+{{{
+constant ALU_FIB4    : std_logic_vector(6 downto 0) := "1000010";
+constant ALU_FIB3    : std_logic_vector(6 downto 0) := "1101100";
+}}}
+  # In the determined Functional Unit, support for the new operations should be added in the corresponding VHDL file. In our benchmark, lines 9 - 12 are added in [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/src/alu.vhd alu.vhd] from the code snippet below.
+{{{
+alu_control : process(clk, reset)
+begin
+	if (reset = '1') then
+		out_valid <= '0';
+		result_s <= (others => '0');
+		cout_s <= '0';
+	elsif (clk = '1' and clk'event) then
+		...
+		elsif std_match(aluop, ALU_FIB4) then
+			result_s <= f_FIB4 (src1, src2);
+		elsif std_match(aluop, ALU_FIB3) then
+			result_s <= f_FIB3 (src1, src2);
+		...
+	end if;
+end process alu_control;
+}}}
+  # Functions and function prototypes should be added to the corresponding file. In our example, the code below was added to [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/src/alu_functions.vhd alu_functions.vhd].
+{{{
+function f_FIB4   ( s1, s2 : std_logic_vector(31 downto 0))
+                    return std_logic_vector;
+
+function f_FIB3   ( s1, s2 : std_logic_vector(31 downto 0))
+                    return std_logic_vector;
+
+...
+
+function f_FIB4   ( s1, s2 : std_logic_vector(31 downto 0))
+                    return std_logic_vector is
+begin
+	return (s1 + s2 + s2 + s1 + s2 + s2 + s1 + s2);
+end function f_FIB4;
+
+function f_FIB3   ( s1, s2 : std_logic_vector(31 downto 0))
+                    return std_logic_vector is
+begin
+	return (s1 + s2 + s2 + s1 + s2);
+end function f_FIB3;
+}}}
+
+
+===Adapting ρ-ASM===
+To adapt ρ-ASM to support the new ρ-OPS, two small additions should be made in [http://code.google.com/p/r-vex/source/browse/trunk/r-ASM/src/syllable.h syllable.h]. A new opcode  define should be made, as well as an addition of the new opcode's mnemonic to the `operation_table` lookup table (lines 11 - 12).
+
+{{{
+#define FIB3   108
+#define FIB4    66
+
+...
+
+static struct operation_t {
+	const char *operation;
+	int opcode;
+} operation_table[] = {
+	...
+	{ "fib3",  FIB3   },
+	{ "fib4",  FIB4   },
+	...
+};
+}}}
 
 ==Running Modelsim Simulations==
 
