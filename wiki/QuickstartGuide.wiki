@@ -105,7 +105,7 @@ begin
 	end if;
 end process alu_control;
 }}}
-  # Functions and function prototypes should be added to the corresponding file. In our example, the code below was added to [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/src/alu_functions.vhd alu_functions.vhd].
+  # Functions and function prototypes should be added to the corresponding file. In our example, the code below was added to [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/src/alu_operations.vhd alu_operations.vhd].
 {{{
 function f_FIB4   ( s1, s2 : std_logic_vector(31 downto 0))
                     return std_logic_vector;
