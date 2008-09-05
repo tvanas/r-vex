@@ -1,0 +1,375 @@
+--------------------------------------------------------------------------------
+-- r-VEX | Syllable layout
+--------------------------------------------------------------------------------
+--
+-- Copyright (c) 2008, Thijs van As <t.vanas@gmail.com>
+--
+-- Computer Engineering Laboratory
+-- Faculty of Electrical Engineering, Mathematics and Computer Science
+-- Delft University of Technology
+-- Delft, The Netherlands
+--
+-- http://r-vex.googlecode.com
+--
+--------------------------------------------------------------------------------
+-- syllable_layout.txt
+--------------------------------------------------------------------------------
+
+This document describes the syllable layout for the r-VEX
+processor. An instruction for an 4-wide r-VEX consists of
+4 syllables.
+
+All opcodes can be found in r-vex_pkg.vhd.
+
+-----------------------------------------------------------
+General information
+-----------------------------------------------------------
+
+Types of immediate values:
+	* branch offsets  : 12 bit (1 syllable)
+		NOTE: the VEX standard defines the branch offset immediate
+		      size as 24 bit. Because r-VEX only operates on small
+		      pieces of code, and to to ease the design, this has
+		      been changed.
+	* short immediate :  9 bit (1 syllable)
+	* long immediate  : 32 bit (2 syllables)
+
+Opcode layout:
+The VEX ISA provides 70 operations to operate -> 7 bits are needed for encoding
+the operations (max 127 ops in 7 bits). The domain for control opcodes also
+includes 2 inter-cluster opcodes.
+
+	* 39 ALU opcodes                     1 . . . . . .
+	* 11 Multiplier (MUL) opcodes        0 0 0 . . . .
+	* 11 Control (CTRL) opcodes          0 1 0 . . . .
+	*  9 Memory (MEM) opcodes            0 0 1 . . . .
+	*    STOP                            0 0 1 1 1 1 1
+	*    NOP                             0 0 0 0 0 0 0
+
+Symbol declaration in syllable layout:
+	1   : logical '1'
+	0   : logical '0'
+
+	o   : Opcode
+	d   : Destination register address
+	a   : Source register 1 address
+	b   : Source register 2 address
+	j   : Source branch register address
+	k   : Destination branch register address
+	l   : Link register address (normaly $r0.63)
+	f   : Branch offset address
+
+	L   : '1' if the syllable is the last in the instruction
+	F   : '1' if the syllable is the first in the instruction
+
+	S S : Immediate switch
+	      0 0 = NO_IMM      no immediate value
+	      0 1 = SHORT_IMM   short immediate
+	      1 0 = BRANCH_IMM  branch offset immediate
+	      1 1 = LONG_IMM    long immediate
+	
+	-   : Don't care
+
+
+-----------------------------------------------------------
+ALU / MUL syllables
+-----------------------------------------------------------
+
+	* R-type (register) syllables:
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |           |           |     | | |
+	|o o o o o o o|0 0|d d d d d d|a a a a a a|b b b b b b|- - -|L|F|
+	|             |S S|           |           |           |     | | |
+
+
+	* Is-type (short immediate) syllables:
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |           |                 | | |
+	|o o o o o o o|0 1|d d d d d d|a a a a a a|i i i i i i i i i|L|F|
+	|             |S S|           |           |                 | | |
+
+
+	* Il-type (long immediate) syllables:
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |           |                   | |
+	|o o o o o o o|1 1|d d d d d d|a a a a a a|i i i i i i i i i i|F|  (1)
+	|             |S S|           |           |                   | |
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |                                           | | | |
+	|0 0 1 1 1 0 0|i i i i i i i i i i i i i i i i i i i i i i|-|L|0|  (2)
+	|             |                                           | | |F|
+
+	
+	------------------
+	slct & slctf (ALU)
+	------------------
+	Operations are identical to 'normal' ALU operations, except for the
+	extra source branch register address [j j j].
+
+	t = b, s1, {s2 | imm}
+	
+	These ALU operations form an opcode exception, as their opcodes tart
+	with 0. This has been done because no space was left in the ALU opcode
+	domain for packing the branch register source addresses otherwise.
+
+	slct  : 0 1 1 1 - - -
+	slctf : 0 1 1 0 - - -
+
+	* R-type syllables:
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |           |           |     | | |
+	|o o o o j j j|0 0|d d d d d d|a a a a a a|b b b b b b|- - -|L|F|
+	|        * * *|S S|           |           |           |     | | |
+
+
+	* Is-type (short immediate) syllables:
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |           |                 | | |
+	|o o o o j j j|0 1|d d d d d d|a a a a a a|i i i i i i i i i|L|F|
+	|        * * *|S S|           |           |                 | | |
+
+
+	* Il-type (long immediate) syllables:
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |           |                   | |
+	|o o o o j j j|1 1|d d d d d d|a a a a a a|i i i i i i i i i i|F|  (1)
+	|        * * *|S S|           |           |                   | |
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |                                           | | | |
+	|0 0 1 1 1 0 0|i i i i i i i i i i i i i i i i i i i i i i|-|L|0|  (2)
+	|             |                                           | | |F|
+
+
+	------------------
+	addcg & divs (ALU)
+	------------------
+	Operations are identical to 'normal' ALU operations, except for the
+	extra source branch register address [j j j] and destination branch
+	register address [k k k]. These operations can not operate on immediate
+	values.
+
+	t, b = b, s1, s2
+	
+	addcg : 1 1 1 1 - - -
+	divs  : 1 1 1 0 - - -
+
+	* R-type syllables:
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |           |           |     | | |
+	|o o o o j j j|0 0|d d d d d d|a a a a a a|b b b b b b|k k k|L|F|
+	|        * * *|S S|           |           |           |     | | |
+
+
+	------------------
+	ALU operations that can have a BR or GR as target register
+	------------------
+	The following operations can have a branch register or a general purpose
+	register as their target. When the destination GR register in [d] equals
+	$r0 (so address "000000"), the destination branch register in [k] is
+	taken.
+
+	!!! Currently no immediate support when BR is target!
+		
+		cmpeq
+		cmpge
+		cmpgeu
+		cmpgt
+		cmpgtu
+		cmple
+		cmpleu
+		cmplt
+		cmpltu
+		cmpne
+		nandl
+		norl
+		orl
+		andl
+
+
+-----------------------------------------------------------
+MEM syllables
+-----------------------------------------------------------
+	
+	Long immediates are handled as with ALU and MUL operations
+
+	* Load operations:
+
+	$r.d = imm[$r.a]
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |           |                 | | |
+	|o o o o o o o|0 0|d d d d d d|a a a a a a|i i i i i i i i i|L|F|
+	|             |S S|           |           |                 | | |
+
+
+	* Store syllables:
+	
+	imm[$r.a] = $r.b
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |           |                 | | |
+	|o o o o o o o|0 0|b b b b b b|a a a a a a|i i i i i i i i i|L|F|
+	|             |S S|           |           |                 | | |
+
+
+-----------------------------------------------------------
+CTRL syllables
+-----------------------------------------------------------
+
+	------------------
+	goto
+	------------------
+	NOTE: according a to a message on the VEX forum, the goto and igoto
+	instructions are overloaded in the latest VEX compilers. For this
+	reason, the goto instruction also supports the link register in [l]
+	as in igoto, with the corresponding [0 0] switch for S.
+
+	See http://www.vliw.org/vex/viewtopic.php?t=52
+
+	Unconditional relative jump to offset address, given by 12 [f] bits.
+
+	goto  : 0 1 0 0 0 0 1
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |                       |     | | |
+	|o o o o o o o|1 0|- - - - - -|f f f f f f f f f f f f|- - -|L|F|
+	|             |S S|           |                       |     | | |
+
+
+	------------------
+	igoto
+	------------------
+	NOTE: igoto is still supported in its original form to stay com-
+	pliant to the original VEX ISA. See note at goto instruction.
+
+	Unconditional absolute indirect jump to link register in [l].
+
+	igoto : 0 1 0 0 0 1 0
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |                             | | |
+	|o o o o o o o|0 0|l l l l l l|- - - - - - - - - - - - - - -|L|F|
+	|             |S S|           |                             | | |
+
+	
+	------------------
+	call & icall
+	------------------
+	NOTE: according a to a message on the VEX forum, the call and icall
+	instructions are overloaded in the latest VEX compilers. For this
+	reason, the call instruction also supports the link register in [l]
+	as in igoto, with the corresponding [0 0] switch for S. icall is
+	still supported in its original form to stay compliant to the origi-
+	nal VEX ISA.
+
+	See http://www.vliw.org/vex/viewtopic.php?t=52
+
+	Unconditional relative call to offset address (call) or link register
+	(icall). Update link register in [l] with <current address + 1>.
+
+	call  : 0 1 0 0 0 1 1
+	icall : 0 1 0 0 1 0 0
+	
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |                       |     | | |
+	|o o o o o o o|1 0|l l l l l l|f f f f f f f f f f f f|- - -|L|F|
+	|             |S S|           |                       |     | | |
+
+
+	------------------
+	br & brf
+	------------------
+
+	Conditional relative branch on true (br) or false (brf) condition,
+	evaluated on the branch register in [j j j].
+
+	br    : 0 1 0 0 1 0 1
+	brf   : 0 1 0 0 1 1 0
+	
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |                       |     | | |
+	|o o o o o o o|1 0|- - - - - -|f f f f f f f f f f f f|j j j|L|F|
+	|             |S S|           |                       |     | | |
+
+
+	------------------
+	return & rfi
+	------------------
+
+	Pop stack frame (stack pointer in $r0.1) and goto link register in [d].
+
+	return: 0 1 0 0 1 1 1
+	rfi   : 0 1 0 1 0 0 0
+	
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |   |           |                       |     | | |
+	|o o o o o o o|1 0|l l l l l l|f f f f f f f f f f f f|- - -|L|F|
+	|             |S S|           |                       |     | | |
+
+	
+	------------------
+	xnop
+	------------------
+
+	Do nothing
+	
+	xnop  : 0 1 0 1 0 0 1
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |                                             | | |
+	|o o o o o o o|- - - - - - - - - - - - - - - - - - - - - - -|L|F|
+	|             |                                             | | |
+
+
+-----------------------------------------------------------
+NOP syllable
+-----------------------------------------------------------
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|                                                               |
+	|0 0 0 0 0 0 0|- - - - - - - - - - - - - - - - - - - - - - - - -|
+	|                                                               |
+
+
+-----------------------------------------------------------
+STOP syllable
+-----------------------------------------------------------
+
+	When a STOP syllable is encountered, the 'done' signal on r-VEX
+	is raised. The STOP syllable consists of an addcg instruction
+	operating on a long immediate value. This combination is not a valid
+	one, so this is used as a STOP operation.
+
+	 31              23              15              7             0
+	 ^               ^               ^               ^             ^
+	|             |                                                 |
+	|0 0 1 1 1 1 1|- - - - - - - - - - - - - - - - - - - - - - - - -|
+	|             |                                                 |
+
