@@ -1,12 +1,15 @@
 #labels Featured,Phase-Implementation,Phase-Deploy
 http://r-vex.googlecode.com/svn/wiki/img/r-vex_logo_300.png
 
-=Quickstart Guide for XUP V2P FPGA Board=
+<h1>Quickstart Guide for XUP V2P FPGA Board</h1>
 
 This is a quickstart guide to easily deploy ρ-VEX, mainly focused on the utilization
 with a Xilinx University Program Virtex-II Pro FPGA board by Digilent. If
 you want to use this guide together with another FPGA platform, you should first add
 the definitions of your board to the workflow as described later.
+
+<h2>Table of Contents</h2>
+<wiki:toc max_depth="3" />
 
 ==Requirements==
   * A [http://www.digilentinc.com/Products/Detail.cfm?av1=Products&Nav2=Programmable&Prod=XUPV2P Xilinx University Program Virtex-II Pro board]
