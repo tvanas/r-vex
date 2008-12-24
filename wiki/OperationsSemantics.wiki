@@ -1,7 +1,10 @@
 #labels Featured,Phase-Implementation,Phase-Requirements
 http://r-vex.googlecode.com/svn/wiki/img/r-vex_logo_300.png
 
-=VEX Operations and Semantics=
+<h1>VEX Operations and Semantics</h1>
+
+<h2>Table of Contents</h2>
+<wiki:toc max_depth="3" />
 
 ==ALU Operations==
 
