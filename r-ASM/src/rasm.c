@@ -173,6 +173,20 @@ int assemble()
 	
 	/* fetch first word of line (this is the operation) */
 	while (fscanf(in_asm, "%s", operation) != EOF) {
+		/* get cluster number (char 48 is '0' and char 57 is '9') */
+		if ((operation[0] == 'c') && (operation[1] >= 48) && (operation[1] <= 57)) {
+			/* 
+			 * r-VEX and r-ASM don't support multi-cluster configurations (yet)
+			 *
+			 * No syllable space is reserved for cluster numbers, maybe we want to
+			 * save instructions for different clusters in different memory sements?
+			 *
+			 * For now, just skip do not use this information (it will always be c0)
+			 */
+			
+			continue;
+		}
+		
 		/* fetch the rest of the line (operands), strip comments and spaces */	
 		fetchline(in_asm, operands);
 
