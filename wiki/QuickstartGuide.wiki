@@ -175,5 +175,7 @@ XIL_PART_r-vex_<mnemonic> = <xilinx_identifier>
   # Create a new _Make_ target `r-vex_<mnemonic>.xst` and let it write your preferred options to the XST configuration file.^2^
   # Create a new _Make_ target `r-vex_<mnemonic>.ucf` and let it write your UCF user constraints to the `.ucf` file.^2^
   # Create a new _Make_ target `r-vex_<mnemonic>.cmd` and let it write the commands for Xilinx IMPACT to program your FPGA.^2^
+  # Set the constant `ACTIVE_LOW` in [http://code.google.com/p/r-vex/source/browse/trunk/r-VEX/src/r-vex_pkg.vhd r-VEX/src/r-vex_pkg.vhd] (line 21) to `1` in case the board uses 'active low' logic (like the XUP V2P board) or to `0` in case the board uses 'active high' logic. *If this constant is defined wrong, your board won't do anything.*
+
 
 ^2^As a reference, you could use the _Make_ target with the mnemonic `v2p`.
