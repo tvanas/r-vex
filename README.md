@@ -14,7 +14,7 @@ A software development compiler toolchain for VEX is made publicly available by 
 The name ρ-VEX stands for 'reconfigurable VEX' processor. Because the letter _Rho_ (_P_ or _ρ_) is the Greek analogous for the Roman _R_ or _r_, ρ-VEX is pronounced as _r-VEX_. This is also the correct spelling when no Greek letters can be used.
 
 ## Getting Started ##
-To start experimenting with ρ-VEX, read the [Quickstart Guide](https://github.com/tvanas/r-vex/blob/master/QuickstartGuide.md) and [download](https://github.com/tvanas/r-vex/blob/master/downloads/r-vex_r38_MSc.tgz?raw=true) the latest code snapshot, or clone [master](https://github.com/tvanas/r-vex/tree/master). When you have a [Xilinx University Program Virtex-II Pro Board by Digilent](http://www.digilentinc.com/Products/Detail.cfm?av1=Products&Nav2=Programmable&Prod=XUPV2P), you should have ρ-VEX running within moments.
+To start experimenting with ρ-VEX, read the [Quickstart Guide](https://github.com/tvanas/r-vex/blob/master/QuickstartGuide.md) and [download](https://github.com/tvanas/r-vex/archive/MSc.zip) a release snapshot, or clone [master](https://github.com/tvanas/r-vex/tree/master). When you have a [Xilinx University Program Virtex-II Pro Board by Digilent](http://www.digilentinc.com/Products/Detail.cfm?av1=Products&Nav2=Programmable&Prod=XUPV2P), you should have ρ-VEX running within moments.
 
 ## Documentation ##
   * [ρ-VEX Quickstart Guide](https://github.com/tvanas/r-vex/blob/master/QuickstartGuide.md)
