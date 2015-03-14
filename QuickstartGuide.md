@@ -16,7 +16,7 @@ the definitions of your board to the workflow as described later.
 <sup>1</sup> When you want to make use of the Makefile method described below on a Windows machine, a Cygwin installation should be present with GNU Make. Xilinx EDK automatically installs a version of Cygwin. However, some GNU tools like `cat` are not included. This results in an error while bundling the log files after synthesis. This can be safely ignored.
 
 ## Quickstart - Deploying ρ-VEX on an FPGA ##
-- [Download](https://github.com/tvanas/r-vex/blob/master/downloads/r-vex_r38_MSc.tgz?raw=true) a snapshotted release of ρ-VEX, or clone the [master](https://github.com/tvanas/r-vex/tree/master) branch.
+- [Download](https://github.com/tvanas/r-vex/archive/MSc.zip) a release snapshot of ρ-VEX, or clone the [master](https://github.com/tvanas/r-vex/tree/master) branch.
 - Inside the r-VEX/src/ directory, synthesize ρ-VEX by entering the following command:
 ```
 make v2p
